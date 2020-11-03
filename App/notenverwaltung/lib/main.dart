@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'models/global.dart';
+import 'package:flutter/foundation.dart';
+import 'UI/Note/note_page.dart';
+import 'UI/Semester/semester_page.dart';
 
 void main() {
   runApp(MyApp());
@@ -11,10 +15,13 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Notenverwaltung',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: blueColorCustom,
         visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: MyHomePage(title: 'Notenverwaltung'),
+        backgroundColor: whiteColorCustom,
+        primaryColor: defaultTargetPlatform == TargetPlatform.iOS
+        ? Colors.grey[50]
+        : null),
+      home: MyHomePage(),
     );
   }
 }
@@ -30,65 +37,98 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
+  List<Semester> semesterList = [
+    Semester('BZZ Semester 1',4.25,'2017'),
+    Semester('KVB Semester 3',5.67,'2019'),
+    Semester('ETH Semester 5',3.95,'2020'),
+  ];
+
   @override
   Widget build(BuildContext context) {
 
     return Scaffold(
-      drawer: NavDrawer(),
       appBar: AppBar(
-        title: Text('Notenverwaltung')
-      ),
-      body: Center(
-        child: Text('Side Menu Tutorial'),
-      ),
-    );
-  }
-}
-class NavDrawer extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: <Widget>[
-          DrawerHeader(
-            child: Text(
-              'Notenverwaltung',
-              style: TextStyle(color: Colors.white, fontSize: 25),
+        title: Text(
+          'Notenverwaltung',
+          style: fontStyle,
+          ),
+          elevation: defaultTargetPlatform == TargetPlatform.android ? 5.0 : 0.0,
+        ),
+      drawer: new Drawer(
+        child: new ListView(
+          children: <Widget>[
+            new UserAccountsDrawerHeader(
+              accountName: new Text("Natalie Sumbo"),
+              accountEmail: new Text("nathaliesumbo@gmail.com"),
+              currentAccountPicture: new CircleAvatar(
+                backgroundColor:
+                  Theme.of(context).platform == TargetPlatform.iOS
+                  ? blueColorCustom
+                  : Colors.white,
+                child: new Text("N"),
+              ),
+              otherAccountsPictures: <Widget>[
+                new CircleAvatar(
+                  backgroundColor:
+                    Theme.of(context).platform == TargetPlatform.iOS
+                    ? blueColorCustom
+                    : Colors.white,
+                  child: new Text("S"),
+                ),
+              ],
             ),
-            decoration: BoxDecoration(
-                color: Colors.blue,
-                image: DecorationImage(
-                    fit: BoxFit.fill,
-                    image: AssetImage('assets/images/cover.jpg'))),
-          ),
-          ListTile(
-            leading: Icon(Icons.input),
-            title: Text('Semester'),
-            onTap: () => {},
-          ),
-          ListTile(
-            leading: Icon(Icons.verified_user),
-            title: Text('Profile'),
-            onTap: () => {Navigator.of(context).pop()},
-          ),
-          ListTile(
-            leading: Icon(Icons.settings),
-            title: Text('Settings'),
-            onTap: () => {Navigator.of(context).pop()},
-          ),
-          ListTile(
-            leading: Icon(Icons.border_color),
-            title: Text('Feedback'),
-            onTap: () => {Navigator.of(context).pop()},
-          ),
-          ListTile(
-            leading: Icon(Icons.exit_to_app),
-            title: Text('Logout'),
-            onTap: () => {Navigator.of(context).pop()},
-          ),
-        ],
+            new ListTile(
+              title: new Text("Semester"),
+              trailing: new Icon(Icons.subject),
+              onTap: (){
+                Navigator.of(context).push(new MaterialPageRoute(
+                  builder: (BuildContext context) =>
+                    Note()));
+              },
+            ),
+            new ListTile(
+              title: new Text("Einstellungen"),
+              trailing: new Icon(Icons.settings),
+              onTap: (){
+                Navigator.of(context).push(new MaterialPageRoute(
+                  builder: (BuildContext context) =>
+                    Note()));
+              },
+            ),
+            new Divider(),
+            new ListTile(
+              title: new Text("Feedback"),
+              trailing: new Icon(Icons.border_color),
+              onTap: (){
+                Navigator.of(context).push(new MaterialPageRoute(
+                  builder: (BuildContext context) =>
+                    Note()));
+              },
+            ),
+
+          ],
+        ),
       ),
+      body:
+        ListView.builder(
+            itemCount: semesterList.length,
+            itemBuilder: (context, index){
+              return Card(
+                child: ListTile(
+                  onTap:() {},
+                  title: Text(semesterList[index].semesterName),
+                ),
+              );
+            }
+          ),
+
+/**
+        FloatingActionButton(
+          child: Icon(Icons.add),
+          backgroundColor: blueColorCustom,
+          onPressed: () {}
+        ),
+ */
     );
   }
 }
