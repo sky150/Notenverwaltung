@@ -17,9 +17,7 @@ class _Note extends State<Note> {
       return new Scaffold(
       appBar: new AppBar(
         title: Text(
-          'Noten',
-          style:fontStyle,
-          ),
+          'Noten'),
           centerTitle: false,
           elevation: 0,
       ),
