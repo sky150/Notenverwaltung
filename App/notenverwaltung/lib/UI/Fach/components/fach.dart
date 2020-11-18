@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:notenverwaltung/UI/Fach/fach_page.dart';
+import 'package:notenverwaltung/UI/Note/components/note.dart';
+import 'package:notenverwaltung/UI/Note/note_screen.dart';
 import 'package:notenverwaltung/models/global.dart';
-//import 'package:plant_app/screens/details/details_screen.dart';
 
-class Semester extends StatelessWidget {
-  const Semester({
+class Fach extends StatelessWidget {
+  const Fach({
     Key key,
   }) : super(key: key);
 
@@ -14,65 +14,96 @@ class Semester extends StatelessWidget {
       scrollDirection: Axis.horizontal,
       child: Column(
         children: <Widget>[
-          SemesterCard(
-            semesterName: "BZZ Semester 1",
-            year: "2017",
-            semesterAvg: 4.25,
+          FachCard(
+            fachName: "Mathematik",
+            weight: "100",
+            fachAvg: 4.25,
             press: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
                   //DetailsScreen()
-                  builder: (context) => FachScreen(),
+                  builder: (context) => NoteScreen(),
                 ),
               );
             },
           ),
-          SemesterCard(
-            semesterName: "KVB Semester 3",
-            year: "2019",
-            semesterAvg: 5.67,
+          FachCard(
+            fachName: "Englisch",
+            weight: "100",
+            fachAvg: 5.67,
             press: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
                   //DetailsScreen()
-                  builder: (context) => FachScreen(),
+                  builder: (context) => null,
                 ),
               );
             },
           ),
-          SemesterCard(
-            semesterName: "ETH Semester 5",
-            year: "2020",
-            semesterAvg: 3.95,
+          FachCard(
+            fachName: "Deutsch",
+            weight: "100",
+            fachAvg: 3.95,
             press: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
                   //DetailsScreen()
-                  builder: (context) => FachScreen(),
+                  builder: (context) => null,
                 ),
               );
             },
           ),
+          FachCard(
+            fachName: "Musik",
+            weight: "0",
+            fachAvg: 3.40,
+            press: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  //DetailsScreen()
+                  builder: (context) => null,
+                ),
+              );
+            },
+          ),
+          FachCard(
+            fachName: "Wirtschaft",
+            weight: "100",
+            fachAvg: 5.00,
+            press: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  //DetailsScreen()
+                  builder: (context) => null,
+                ),
+              );
+            },
+          ),
+          Text(" "),
+          Text('Notenschnitt: 4.45'),
+          Text('Pluspunkte: -0.5'),
         ],
       ),
     );
   }
 }
 
-class SemesterCard extends StatelessWidget {
-  const SemesterCard({
+class FachCard extends StatelessWidget {
+  const FachCard({
     Key key,
-    this.semesterName,
-    this.year,
-    this.semesterAvg,
+    this.fachName,
+    this.weight,
+    this.fachAvg,
     this.press,
   }) : super(key: key);
 
-  final String semesterName, year;
-  final double semesterAvg;
+  final String fachName, weight;
+  final double fachAvg;
   final Function press;
 
   @override
@@ -113,10 +144,10 @@ class SemesterCard extends StatelessWidget {
                     text: TextSpan(
                       children: [
                         TextSpan(
-                            text: "$semesterName\n".toUpperCase(),
+                            text: "$fachName\n".toUpperCase(),
                             style: Theme.of(context).textTheme.button),
                         TextSpan(
-                          text: "$year".toUpperCase(),
+                          text: "Gewichtung: $weight \%".toUpperCase(),
                           style: TextStyle(
                             color: kPrimaryColor.withOpacity(0.5),
                           ),
@@ -125,12 +156,11 @@ class SemesterCard extends StatelessWidget {
                     ),
                   ),
                   Spacer(),
-                  Text('$semesterAvg',
+                  Text('$fachAvg',
                       style: Theme.of(context).textTheme.button.copyWith(
-                            color: ((this.semesterAvg < 4.0)
+                            color: ((this.fachAvg < 4.0)
                                 ? kTextRed
-                                : (this.semesterAvg < 5.0 &&
-                                        this.semesterAvg > 4.0)
+                                : (this.fachAvg < 5.0 && this.fachAvg > 4.0)
                                     ? kTextYellow
                                     : kTextGreen),
                           ))
