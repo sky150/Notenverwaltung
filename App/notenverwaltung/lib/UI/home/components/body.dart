@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:notenverwaltung/UI/home/components/add_semester.dart';
 import 'package:notenverwaltung/models/global.dart';
 
 import 'featurred_plants.dart';
@@ -17,7 +18,15 @@ class Body extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           HeaderWithSearchBox(size: size),
-          TitleWithMoreBtn(title: "Semester", press: () {}),
+          TitleWithMoreBtn(
+              title: "Semester",
+              press: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AddSemester(),
+                    ));
+              }),
           Semester(),
           TitleWithMoreBtn(title: "Statistiken", press: () {}),
           FeaturedPlants(),
