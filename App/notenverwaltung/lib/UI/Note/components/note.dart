@@ -27,7 +27,7 @@ class Note extends StatelessWidget {
           ),
           Text(" "),
           Text('Notenschnitt: 4.45'),
-          Text('Pluspunkte: -0.5'),
+          Text('Wunschnote: -0.5'),
         ],
       ),
     );

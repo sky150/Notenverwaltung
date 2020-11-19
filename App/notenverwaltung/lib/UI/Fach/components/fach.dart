@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:notenverwaltung/UI/Note/components/note.dart';
 import 'package:notenverwaltung/UI/Note/note_screen.dart';
 import 'package:notenverwaltung/models/global.dart';
 

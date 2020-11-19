@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:notenverwaltung/UI/Fach/fach_page.dart';
 import 'package:notenverwaltung/models/global.dart';
 
-import 'model/semester.dart';
 //import 'package:plant_app/screens/details/details_screen.dart';
 
 class Semester extends StatelessWidget {
