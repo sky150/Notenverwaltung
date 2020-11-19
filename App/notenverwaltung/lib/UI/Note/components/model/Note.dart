@@ -1,6 +1,6 @@
 class NoteModel {
   double note;
-  String weight;
+  int weight;
   String fach;
   DateTime date;
   String notes;

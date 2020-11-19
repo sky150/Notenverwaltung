@@ -36,7 +36,7 @@ class _TestFormState extends State<TestForm> {
 
     return Form(
       key: _formKey,
-      child: Column(
+      child: ListView(
         children: <Widget>[
           Container(
             alignment: Alignment.bottomCenter,

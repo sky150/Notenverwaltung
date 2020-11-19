@@ -1,6 +1,6 @@
 class FachModel {
   String fachName;
-  String weight;
+  int weight;
   String wishGrade;
 
   FachModel({this.fachName, this.weight, this.wishGrade});

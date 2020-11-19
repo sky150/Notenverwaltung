@@ -36,7 +36,7 @@ class _TestFormState extends State<TestForm> {
 
     return Form(
       key: _formKey,
-      child: Column(
+      child: ListView(
         children: <Widget>[
           Container(
             alignment: Alignment.bottomCenter,
@@ -65,13 +65,14 @@ class _TestFormState extends State<TestForm> {
                   child: MyTextFormField(
                     labelText: 'Gewichtung',
                     validator: (String value) {
-                      if (value.isEmpty) {
-                        return 'Gib die Gewichtung ein';
+                      int weight = int.parse(value);
+                      if (weight < 0 || weight > 100 || value.isEmpty) {
+                        return 'Gib eine gültige Gewichtung ein';
                       }
                       return null;
                     },
                     onSaved: (String value) {
-                      model.weight = value;
+                      model.weight = int.parse(value);
                     },
                   ),
                 ),
