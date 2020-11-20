@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:notenverwaltung/UI/Statistiken/statistiken_screen.dart';
+import 'package:notenverwaltung/UI/User/user_screen.dart';
+import 'package:notenverwaltung/UI/home/home_screen.dart';
 import 'package:notenverwaltung/models/global.dart';
 
 class MyBottomNavBar extends StatelessWidget {
@@ -31,15 +34,33 @@ class MyBottomNavBar extends StatelessWidget {
         children: <Widget>[
           IconButton(
             icon: SvgPicture.asset("assets/icons/flower.svg"),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => HomeScreen(),
+                  ));
+            },
           ),
           IconButton(
             icon: SvgPicture.asset("assets/icons/bar_chart.svg"),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => StatistikenScreen(),
+                  ));
+            },
           ),
           IconButton(
             icon: SvgPicture.asset("assets/icons/user-icon.svg"),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => UserScreen(),
+                  ));
+            },
           ),
         ],
       ),
