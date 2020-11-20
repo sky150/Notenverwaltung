@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:notenverwaltung/UI/Note/components/model/Note.dart';
 import 'package:notenverwaltung/components/my_bottom_nav_bar.dart';
 import 'package:notenverwaltung/models/global.dart';
+import 'package:intl/intl.dart';
 
 class AddNote extends StatelessWidget {
   @override
@@ -29,18 +30,30 @@ class TestForm extends StatefulWidget {
 class _TestFormState extends State<TestForm> {
   final _formKey = GlobalKey<FormState>();
   NoteModel model = NoteModel();
+  final DateFormat formatter = DateFormat('dd.MM.yyyy');
   DateTime selectedDate = DateTime.now();
 
   _selectDate(BuildContext context) async {
     final DateTime picked = await showDatePicker(
-      context: context,
-      initialDate: selectedDate, // Refer step 1
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2025),
-    );
+        context: context,
+        initialDate: selectedDate, // Refer step 1
+        firstDate: DateTime(1970),
+        lastDate: DateTime(2030),
+        helpText: 'Wähle ein Datum aus',
+        builder: (BuildContext context, Widget child) {
+          return Theme(
+            data: ThemeData(
+              primarySwatch: Colors.blue,
+              primaryColor: kPrimaryColor,
+              accentColor: kPrimaryColor,
+            ),
+            child: child,
+          );
+        });
     if (picked != null && picked != selectedDate)
       setState(() {
         selectedDate = picked;
+        print(selectedDate.toString());
       });
   }
 
@@ -60,7 +73,7 @@ class _TestFormState extends State<TestForm> {
                 Container(
                   alignment: Alignment.topCenter,
                   width: halfMediaWidth * 2,
-                  child: MyTextFormField(
+                  child: MyTextNumberField(
                     labelText: 'Note',
                     validator: (String value) {
                       double note = double.parse(value);
@@ -77,7 +90,7 @@ class _TestFormState extends State<TestForm> {
                 Container(
                   alignment: Alignment.topCenter,
                   width: halfMediaWidth * 2,
-                  child: MyTextFormField(
+                  child: MyTextNumberField(
                     labelText: 'Gewichtung',
                     validator: (String value) {
                       int weight = int.parse(value);
@@ -110,17 +123,32 @@ class _TestFormState extends State<TestForm> {
                 Container(
                   alignment: Alignment.topCenter,
                   width: halfMediaWidth * 2,
-                  child: MyTextFormField(
-                    labelText: 'Datum',
-                    validator: (String value) {
-                      if (value.isEmpty) {
-                        return 'Gib den Datum ein';
-                      }
-                      return null;
-                    },
-                    onSaved: (String value) {
-                      model.fach = value;
-                    },
+                  child: Padding(
+                    padding: const EdgeInsets.all(kDefaultPadding),
+                    child: TextFormField(
+                      onTap: () {
+                        setState(() {
+                          _selectDate(context);
+                        });
+                      },
+                      decoration: InputDecoration(
+                        suffixIcon: Icon(Icons.arrow_drop_down),
+                        hintText: formatter.format(selectedDate),
+                        contentPadding: EdgeInsets.all(10.0),
+                        border: InputBorder.none,
+                        filled: true,
+                        fillColor: Colors.grey[200],
+                      ),
+                      validator: (String value) {
+                        if (value.isEmpty) {
+                          return 'Gib den Datum ein';
+                        }
+                        return null;
+                      },
+                      onSaved: (String value) {
+                        model.fach = value;
+                      },
+                    ),
                   ),
                 ),
                 Container(
@@ -155,18 +183,6 @@ class _TestFormState extends State<TestForm> {
                     ),
                   ),
                 ),
-                Container(
-                  alignment: Alignment.bottomCenter,
-                  child: RaisedButton(
-                    onPressed: () => _selectDate(context), // Refer step 3
-                    child: Text(
-                      'Select date',
-                      style: TextStyle(
-                          color: Colors.black, fontWeight: FontWeight.bold),
-                    ),
-                    color: Colors.greenAccent,
-                  ),
-                ),
               ],
             ),
           ),
@@ -192,6 +208,37 @@ class MyTextFormField extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.all(kDefaultPadding),
       child: TextFormField(
+        decoration: InputDecoration(
+          labelText: labelText,
+          contentPadding: EdgeInsets.all(10.0),
+          border: InputBorder.none,
+          filled: true,
+          fillColor: Colors.grey[200],
+        ),
+        validator: validator,
+        onSaved: onSaved,
+      ),
+    );
+  }
+}
+
+class MyTextNumberField extends StatelessWidget {
+  final Function validator;
+  final Function onSaved;
+  final String labelText;
+
+  MyTextNumberField({
+    this.labelText,
+    this.validator,
+    this.onSaved,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.all(kDefaultPadding),
+      child: TextFormField(
+        keyboardType: TextInputType.number,
         decoration: InputDecoration(
           labelText: labelText,
           contentPadding: EdgeInsets.all(10.0),
