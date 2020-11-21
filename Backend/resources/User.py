@@ -2,7 +2,6 @@ from flask_restful import Resource
 
 class User(Resource):
     __tablename__ = 'users'
-    __table_args__ = tuple(db.UniqueConstraint('id','username',name='my_2unique'))
 
     id = db.Column(db.String(), primary_key=True, unique=True)
     username = db.Column(db.String(), primary_key=True)

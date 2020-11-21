@@ -10,22 +10,19 @@ db = SQLAlchemy()
 
 class User(db.Model):
     __tablename__ = 'users'
-    __table_args__ = tuple(db.UniqueConstraint('id','username',name='my_2unique'))
 
-    id = db.Column(db.String(), primary_key=True, unique=True)
-    username = db.Column(db.String(), primary_key=True)
-    first_name = db.Column(db.String())
-    last_name = db.Column(db.String())
+    id = db.Column(db.Integer(), primary_key=True)
+    username = db.Column(db.String(), unique=True)
+    firstname = db.Column(db.String())
+    lastname = db.Column(db.String())
     password = db.Column(db.String())
     email = db.Column(db.String())
 
 
-    def __init__(self, id,apiKey,username,first_name,last_name,password, email):
-        self.id = id
-        self.apiKey = apiKey
+    def __init__(self, username,firstname,lastname,password, email):
         self.username = username
-        self.first_name = first_name
-        self.last_name = last_name
+        self.firstname = firstname
+        self.lastname = lastname
         self.password = password
         self.email = email
 
@@ -35,10 +32,9 @@ class User(db.Model):
     def serializer(self):
         return {
             'id' : self.id,
-            'apiKey' : self.apiKey,
             'username' : self.username,
-            'first_name' : self.first_name,
-            'last_name' : self.last_name,
+            'firstname' : self.firstname,
+            'lastname' : self.lastname,
             'password' : self.password,
             'email' : self.email
         }
