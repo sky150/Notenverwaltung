@@ -9,11 +9,12 @@ class User(Resource):
     last_name = db.Column(db.String())
     password = db.Column(db.String())
     email = db.Column(db.String())
+    api_key = db.Column(db.String())
 
 
-    def __init__(self, id,apiKey,username,first_name,last_name,password, email):
+    def __init__(self, id,api_key,username,first_name,last_name,password, email):
         self.id = id
-        self.apiKey = apiKey
+        self.api_key = api_key
         self.username = username
         self.first_name = first_name
         self.last_name = last_name
@@ -26,10 +27,10 @@ class User(Resource):
     def serializer(self):
         return {
             'id' : self.id,
-            'apiKey' : self.apiKey,
+            'api_key' : self.api_key,
             'username' : self.username,
-            'first_name' : self.first_name,
-            'last_name' : self.last_name,
+            'firstname' : self.firstname,
+            'lastname' : self.lastname,
             'password' : self.password,
             'email' : self.email
         }
