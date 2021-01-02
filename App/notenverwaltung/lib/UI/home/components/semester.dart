@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:notenverwaltung/UI/Fach/fach_page.dart';
+import 'package:notenverwaltung/UI/home/components/add_semester.dart';
 import 'package:notenverwaltung/models/global.dart';
 import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-//import 'package:plant_app/screens/details/details_screen.dart';
+import 'body.dart';
+
 class SemesterModel {
   SemesterModel({this.id, this.name, this.durchschnitt, this.jahr, this.notiz});
   final int id;
@@ -15,8 +17,9 @@ class SemesterModel {
   String notiz;
 }
 
+enum HttpRequestStatus { NOT_DONE, DONE, ERROR }
+
 class Semester extends StatelessWidget {
-  //SemesterModel model;
   static const _semesterUrl = 'http://10.0.2.2:8888/semester';
   static final _headers = {'Content-Type': 'application/json'};
 
@@ -26,7 +29,6 @@ class Semester extends StatelessWidget {
 
   Future<List<SemesterModel>> getSemester() async {
     final response = await http.get(_semesterUrl);
-    //print(response.body);
     if (response.statusCode == 200) {
       List responseJson = json.decode(response.body.toString());
       List<SemesterModel> semesterList = createSemesterList(responseJson);
@@ -45,9 +47,21 @@ class Semester extends StatelessWidget {
     }
   }
 
+  Future deleteSemester(int id) async {
+    String status = '';
+    final url = '$_semesterUrl/$id';
+    final response = await http.delete(url, headers: _headers);
+    if (response.statusCode == 200) {
+      print('Semester deleted with this id: $id');
+      status = 'DONE';
+    } else {
+      status = 'NOT_DONE';
+    }
+    return status;
+  }
+
   List<SemesterModel> createSemesterList(List data) {
     List<SemesterModel> list = new List();
-    //print(data);
 
     for (int i = 0; i < data.length; i++) {
       int id = data[i]["id"];
@@ -63,154 +77,158 @@ class Semester extends StatelessWidget {
           notiz: notiz);
       list.add(semesterObject);
     }
-    // for (int i = 0; i < list.length; i++) {
-    //   print(list[i].id);
-    //   print(list[i].name);
-    //   print(list[i].durchschnitt);
-    //   print(list[i].jahr);
-    //   print(list[i].notiz);
-    // }
     return list;
   }
 
   @override
   Widget build(BuildContext context) {
-    // return Container(
-    //     child: new FutureBuilder<List<SemesterModel>>(
-    //   future: readSemester(),
-    //   builder: (context, snapshot) {
-    //     if (snapshot.hasData) {
-    //       Expanded(
-    //         child: SizedBox(
-    //           height: 200.0,
-    //           child: new ListView.builder(
-    //             scrollDirection: Axis.horizontal,
-    //             itemCount: snapshot.data.length,
-    //             itemBuilder: (BuildContext ctxt, int index) {
-    //               return new Text(snapshot.data[index].name);
-    //             },
-    //           ),
-    //         ),
-    //       );
-    //     } else if (snapshot.hasError) {
-    //       return new Text("${snapshot.error}");
-    //     }
-    //     return new Text(snapshot.data[0].name);
-    //   },
-    // ));
-
+    Size size = MediaQuery.of(context).size;
     return Container(
-        //scrollDirection: Axis.horizontal,
-        child: new FutureBuilder(
-      future: getSemester(),
-      builder: (context, snapshot) {
-        if (snapshot.data == null) {
-          return Container(
-            child: Container(
-              child: Text("Loading..."),
-            ),
-          );
-          // print(snapshot.data);
-          // Expanded(
-          //     child: new ListView.builder(
-          //         itemCount: snapshot.data.length,
-          //         itemBuilder: (context, index) {
-          //           return new Column(
-          //               crossAxisAlignment: CrossAxisAlignment.start,
-          //               children: <Widget>[
-          //                 SemesterCard(
-          //                   semesterName: snapshot.data[index].name,
-          //                   year: snapshot.data[index].jahr,
-          //                   semesterAvg: snapshot.data[index].durchschnitt,
-          //                   press: () {
-          //                     Navigator.push(
-          //                       context,
-          //                       MaterialPageRoute(
-          //                         //DetailsScreen()
-          //                         builder: (context) => FachScreen(),
-          //                       ),
-          //                     );
-          //                   },
-          //                 ),
-          //               ]);
-          //         }));
-        } else {
-          Expanded(
-              child: ListView.builder(
-                  itemCount: snapshot.data.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return ListTile(
-                      title: Text(snapshot.data[index].name),
-                    );
-                  }));
-        }
-        // By default, show a loading spinner
-        return new Text(snapshot.data[3].name);
-      },
-    ));
-
-    //Column(
-    // children: <Widget>[
-    //   SemesterCard(
-    //     semesterName: "BZZ Semester 1",
-    //     year: "2017",
-    //     semesterAvg: 4.25,
-    //     press: () {
-    //       Navigator.push(
-    //         context,
-    //         MaterialPageRoute(
-    //           //DetailsScreen()
-    //           builder: (context) => FachScreen(),
-    //         ),
-    //       );
-    //     },
-    //   ),
-    //   SemesterCard(
-    //     semesterName: "KVB Semester 3",
-    //     year: "2019",
-    //     semesterAvg: 5.67,
-    //     press: () {
-    //       Navigator.push(
-    //         context,
-    //         MaterialPageRoute(
-    //           //DetailsScreen()
-    //           builder: (context) => FachScreen(),
-    //         ),
-    //       );
-    //     },
-    //   ),
-    //   SemesterCard(
-    //     semesterName: "ETH Semester 5",
-    //     year: "2020",
-    //     semesterAvg: 3.95,
-    //     press: () {
-    //       Navigator.push(
-    //         context,
-    //         MaterialPageRoute(
-    //           //DetailsScreen()
-    //           builder: (context) => FachScreen(),
-    //         ),
-    //       );
-    //     },
-    //   ),
-    // ],
-    //),
-    //);
+        margin: EdgeInsets.only(
+          left: kDefaultPadding / 2,
+          top: kDefaultPadding / 2,
+          bottom: kDefaultPadding / 2,
+        ),
+        width: size.width * 0.9,
+        child: SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: new FutureBuilder(
+              future: getSemester(),
+              builder: (context, snapshot) {
+                if (snapshot.data == null) {
+                  return Container(
+                    child: Container(
+                      child: Text("Loading..."),
+                    ),
+                  );
+                } else if (snapshot.hasData) {
+                  return ListView.builder(
+                      scrollDirection: Axis.vertical,
+                      physics: NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: snapshot.data.length,
+                      itemBuilder: (context, index) {
+                        var semester = snapshot.data[index];
+                        return Dismissible(
+                            key: Key(semester.id.toString()),
+                            background: Container(color: Colors.red),
+                            child: SemesterCard(
+                              semesterName: semester.name,
+                              year: semester.jahr,
+                              semesterAvg: semester.durchschnitt,
+                              press: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    //DetailsScreen()
+                                    builder: (context) => FachScreen(),
+                                  ),
+                                );
+                              },
+                              longPress: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    //DetailsScreen()
+                                    builder: (context) => AddSemester(
+                                        semesterId: semester.id,
+                                        name: semester.name,
+                                        jahr: semester.jahr,
+                                        notiz: semester.notiz),
+                                  ),
+                                );
+                              },
+                            ),
+                            confirmDismiss: (direction) async {
+                              //if (direction == DismissDirection.endToStart) {
+                              final bool res = await showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: new Text("${semester.name}"),
+                                      content: Text(
+                                          "Wollen sie ${semester.name} wirklich löschen?"),
+                                      actions: <Widget>[
+                                        FlatButton(
+                                            onPressed: () =>
+                                                Navigator.of(context).pop(),
+                                            child: const Text("ABBRECHEN")),
+                                        FlatButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop(true);
+                                            if ('DONE' ==
+                                                deleteSemester(semester.id)) {
+                                              snapshot.data.removeAt(index);
+                                            }
+                                          },
+                                          child: const Text("LÖSCHEN"),
+                                        ),
+                                      ],
+                                    );
+                                  });
+                              return res;
+                            });
+                        // return Dismissible(
+                        //   key: Key(semester.id.toString()),
+                        //   onDismissed: (direction) async {
+                        //     var httpRequestStatus =
+                        //         await deleteSemester(semester.id);
+                        //     if (httpRequestStatus == 'DONE') {
+                        //       return AlertDialog(
+                        //         title: new Text("SemesterName"),
+                        //         content: Text("Semester wirklich löschen?"),
+                        //         actions: <Widget>[
+                        //           FlatButton(
+                        //               onPressed: () =>
+                        //                   Navigator.of(context).pop(false),
+                        //               child: const Text("ABBRECHEN")),
+                        //           FlatButton(
+                        //             onPressed: () =>
+                        //                 snapshot.data.removeAt(index),
+                        //             child: const Text("LÖSCHEN"),
+                        //           ),
+                        //         ],
+                        //       );
+                        //     }
+                        //   },
+                        //   background: Container(color: Colors.red),
+                        //   child: SemesterCard(
+                        //       semesterName: semester.name,
+                        //       year: semester.jahr,
+                        //       semesterAvg: semester.durchschnitt,
+                        //       press: () {
+                        //         Navigator.push(
+                        //           context,
+                        //           MaterialPageRoute(
+                        //             //DetailsScreen()
+                        //             builder: (context) => FachScreen(),
+                        //           ),
+                        //         );
+                        //       }),
+                        // );
+                      });
+                } else {
+                  return new CircularProgressIndicator();
+                }
+              },
+            )));
   }
 }
 
 class SemesterCard extends StatelessWidget {
-  const SemesterCard({
-    Key key,
-    this.semesterName,
-    this.year,
-    this.semesterAvg,
-    this.press,
-  }) : super(key: key);
+  const SemesterCard(
+      {Key key,
+      this.semesterName,
+      this.year,
+      this.semesterAvg,
+      this.press,
+      this.longPress})
+      : super(key: key);
 
   final String semesterName, year;
   final double semesterAvg;
   final Function press;
+  final Function longPress;
 
   @override
   Widget build(BuildContext context) {
@@ -226,6 +244,7 @@ class SemesterCard extends StatelessWidget {
         children: <Widget>[
           GestureDetector(
             onTap: press,
+            onLongPress: longPress,
             child: Container(
               padding: EdgeInsets.all(kDefaultPadding / 2),
               decoration: BoxDecoration(
