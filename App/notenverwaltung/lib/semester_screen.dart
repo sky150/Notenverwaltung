@@ -45,16 +45,12 @@ class SemesterList extends StatelessWidget {
                       );
                     },
                     longPress: () {
+                      int selectedId = semester[index].id;
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            //DetailsScreen()
-                            // builder: (context) => AddSemester(
-                            //     semesterId: semester.id,
-                            //     name: semester.name,
-                            //     jahr: semester.jahr,
-                            //     notiz: semester.notiz),
-                            ),
+                          builder: (context) => AddSemester(id: selectedId),
+                        ),
                       );
                     },
                   ),

@@ -1,0 +1,36 @@
+DROP TABLE IF EXISTS _semester;
+DROP TABLE IF EXISTS _noten;
+CREATE TABLE _semester(
+  semester_id serial NOT NULL,
+  semester_name VARCHAR(45) NOT NULL,
+  semester_jahr VARCHAR(3) NULL,
+  semester_durchschnitt DECIMAL NULL,
+  semester_notiz VARCHAR(300) NULL,
+  PRIMARY KEY (semester_id));
+
+CREATE TABLE _fach(
+  fach_id serial NOT NULL,
+  fach_name VARCHAR(45) NOT NULL,
+  fach_gewichtung VARCHAR(3) NULL,
+  fach_durchschnitt DECIMAL NULL,
+  semester_id int ,
+  PRIMARY KEY (fach_id),
+  CONSTRAINT fk_semester
+    FOREIGN KEY (semester_id)
+    REFERENCES _semester(semester_id)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION);
+
+CREATE TABLE _note(
+  note_id serial NOT NULL,
+  note DECIMAL NOT NULL,
+  note_gewichtung VARCHAR(3) NULL,
+  note_datum DATE NULL,
+  note_notiz VARCHAR(100) NULL,
+  fach_id INT ,
+  PRIMARY KEY (note_id),
+  CONSTRAINT fk_fach
+    FOREIGN KEY (fach_id)
+    REFERENCES _fach(fach_id)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION);

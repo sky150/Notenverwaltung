@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:notenverwaltung/UI/Fach/components/body.dart';
 import 'package:notenverwaltung/components/my_bottom_nav_bar.dart';
 import 'package:notenverwaltung/UI/Fach/components/add_fach.dart';
 import 'package:notenverwaltung/components/title_with_more_bbtn.dart';

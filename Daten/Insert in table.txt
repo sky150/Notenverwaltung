@@ -1,0 +1,23 @@
+INSERT INTO _note (note, note_gewichtung, note_datum, note_notiz, fach_id)
+    VALUES (6.0, '100', '2012-09-28','thats the thing', 1);
+INSERT INTO _note (note, note_gewichtung, note_datum, note_notiz, fach_id)
+    VALUES (5.0, '100', '2014-09-28','thats the that they do', 1);
+INSERT INTO _note (note, note_gewichtung, note_datum, note_notiz, fach_id)
+    VALUES (4.5, '100', '2016-09-28','thats the that', 2);
+INSERT INTO _note (note, note_gewichtung, note_datum, note_notiz, fach_id)
+    VALUES (5.0, '100', '2016-09-28','thats ', 2);
+INSERT INTO _note (note, note_gewichtung, note_datum, note_notiz, fach_id)
+    VALUES (4.9, '100', '2017-09-28','thats dont', 3);
+INSERT INTO _note (note, note_gewichtung, note_datum, note_notiz, fach_id)
+    VALUES (3.25, '100', '2020-09-28','ne ne ne', 4);
+INSERT INTO _note (note, note_gewichtung, note_datum, note_notiz, fach_id)
+    VALUES (3.75, '100', '2020-09-28','nein das geht nicht', 5);
+INSERT INTO _note (note, note_gewichtung, note_datum, note_notiz, fach_id)
+    VALUES (5.0, '100', '2020-09-28','thats englisch bitch', 6);
+--INSERT INTO _fach (fach_name, fach_gewichtung, fach_durchschnitt, semester_id)
+--    VALUES ('Musik', '0', 3.75, 2);
+--INSERT INTO _fach (fach_name, fach_gewichtung, fach_durchschnitt, semester_id)
+--    VALUES ('Deutsch', '100', 4.9, 1);	
+
+--Select * from _semester;
+--Select * from _fach;

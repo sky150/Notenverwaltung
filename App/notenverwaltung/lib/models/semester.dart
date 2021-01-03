@@ -20,6 +20,15 @@ class Semester {
       notiz: json['semester_notiz'],
     );
   }
+  factory Semester.fromFach(Semester anotherSemester) {
+    return Semester(
+      id: anotherSemester.id,
+      name: anotherSemester.name,
+      jahr: anotherSemester.jahr,
+      durchschnitt: anotherSemester.durchschnitt,
+      notiz: anotherSemester.notiz,
+    );
+  }
 }
 
 Future<List<Semester>> getSemester() async {
@@ -73,4 +82,45 @@ Future deleteSemester(int id) async {
     status = 'NOT_DONE';
   }
   return status;
+}
+
+Future<Semester> getSemesterById(int id) async {
+  final url = '$URL_SEMESTER/$id';
+  final response = await http.get(url, headers: URL_HEADERS);
+  if (response.statusCode == 200) {
+    Map<String, dynamic> mapResponse = json.decode(response.body);
+    return Semester.fromJson(mapResponse);
+  } else {
+    return Semester();
+  }
+}
+
+Future<Semester> updateSemester(Map<String, dynamic> params) async {
+  final response =
+      await http.put('$URL_SEMESTER/${params["id"]}', body: params);
+  print('response = $response');
+  if (response.statusCode == 200) {
+    final responseBody = await json.decode(response.body);
+    return Semester.fromJson(responseBody);
+  } else {
+    throw Exception('Failes to update a Task. Error${response.toString()}');
+  }
+}
+
+Future createSemester(Semester semester) async {
+  final response = await http.post(URL_SEMESTER,
+      headers: URL_HEADERS,
+      body: json.encode({
+        'name': semester.name,
+        'durchschnitt': 0.0,
+        'jahr': semester.jahr,
+        'notiz': semester.notiz
+      }));
+  if (response.statusCode == 200) {
+    print(response.body.toString());
+    return response;
+  } else {
+    print(response.statusCode);
+    print(response.body);
+  }
 }
