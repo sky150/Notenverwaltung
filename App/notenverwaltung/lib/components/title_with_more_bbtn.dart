@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:notenverwaltung/models/global.dart';
+import 'package:notenverwaltung/global.dart';
 
 class TitleWithMoreBtn extends StatelessWidget {
   const TitleWithMoreBtn({

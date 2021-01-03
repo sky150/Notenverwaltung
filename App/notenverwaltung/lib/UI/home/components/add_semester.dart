@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:notenverwaltung/UI/home/components/model/semester.dart';
-import 'package:notenverwaltung/UI/home/components/semester.dart';
+import 'package:notenverwaltung/models/semester.dart';
+import 'package:notenverwaltung/semester_screen.dart';
 import 'package:notenverwaltung/UI/home/home_screen.dart';
 import 'package:notenverwaltung/components/my_bottom_nav_bar.dart';
-import 'package:notenverwaltung/models/global.dart';
+import 'package:notenverwaltung/global.dart';
 import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-enum HttpRequestStatus { NOT_DONE, DONE, ERROR }
+//enum HttpRequestStatus { NOT_DONE, DONE, ERROR }
 
 class SemesterModel {
   int semesterId;

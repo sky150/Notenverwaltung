@@ -19,7 +19,7 @@ class SemesterController extends ResourceController {
   @Operation.delete('id')
   Future<Response> deleteSemesterByID(@Bind.path('id') int id) async {
     final semesterQuery = Query<Semester>(context)
-      ..where((s) => s.id).equalTo(id);
+      ..where((s) => s.semester_id).equalTo(id);
     final semester = await semesterQuery.delete();
     if (semester == null) {
       return Response.notFound();
@@ -31,7 +31,7 @@ class SemesterController extends ResourceController {
   Future<Response> updateSemesterById(
       @Bind.path('id') int id, @Bind.body() Semester inputSemester) async {
     final semesterQuery = Query<Semester>(context)
-      ..where((s) => s.id).equalTo(id)
+      ..where((s) => s.semester_id).equalTo(id)
       ..values = inputSemester;
     final semester = await semesterQuery.updateOne();
     if (semester == null) {
@@ -50,7 +50,7 @@ class SemesterController extends ResourceController {
   @Operation.get('id')
   Future<Response> getSemesterByID(@Bind.path('id') int id) async {
     final semesterQuery = Query<Semester>(context)
-      ..where((s) => s.id).equalTo(id);
+      ..where((s) => s.semester_id).equalTo(id);
     final semester = await semesterQuery.fetchOne();
     if (semester == null) {
       return Response.notFound();

@@ -4,17 +4,17 @@ class Semester extends ManagedObject<_Semester> implements _Semester {}
 
 class _Semester {
   @primaryKey
-  int id;
+  int semester_id;
 
   @Column(unique: false)
-  String name;
+  String semester_name;
 
   @Column(unique: false)
-  double durchschnitt;
+  double semester_durchschnitt;
 
   @Column(unique: false)
-  String jahr;
+  String semester_jahr;
 
   @Column(nullable: true)
-  String notiz;
+  String semester_notiz;
 }

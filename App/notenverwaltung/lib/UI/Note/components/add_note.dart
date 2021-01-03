@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:notenverwaltung/UI/Note/components/model/Note.dart';
 import 'package:notenverwaltung/components/my_bottom_nav_bar.dart';
-import 'package:notenverwaltung/models/global.dart';
+import 'package:notenverwaltung/global.dart';
 import 'package:intl/intl.dart';
 
 class AddNote extends StatelessWidget {
@@ -29,7 +28,7 @@ class TestForm extends StatefulWidget {
 
 class _TestFormState extends State<TestForm> {
   final _formKey = GlobalKey<FormState>();
-  NoteModel model = NoteModel();
+  //NoteModel model = NoteModel();
   final DateFormat formatter = DateFormat('dd.MM.yyyy');
   DateTime selectedDate = DateTime.now();
 
@@ -83,7 +82,7 @@ class _TestFormState extends State<TestForm> {
                       return null;
                     },
                     onSaved: (String value) {
-                      model.note = double.parse(value);
+                      //model.note = double.parse(value);
                     },
                   ),
                 ),
@@ -100,7 +99,7 @@ class _TestFormState extends State<TestForm> {
                       return null;
                     },
                     onSaved: (String value) {
-                      model.weight = int.parse(value);
+                      //model.weight = int.parse(value);
                     },
                   ),
                 ),
@@ -116,7 +115,7 @@ class _TestFormState extends State<TestForm> {
                       return null;
                     },
                     onSaved: (String value) {
-                      model.fach = value;
+                      //model.fach = value;
                     },
                   ),
                 ),
@@ -146,7 +145,7 @@ class _TestFormState extends State<TestForm> {
                         return null;
                       },
                       onSaved: (String value) {
-                        model.fach = value;
+                        //model.fach = value;
                       },
                     ),
                   ),
@@ -157,7 +156,7 @@ class _TestFormState extends State<TestForm> {
                   child: MyTextArea(
                     labelText: 'Notiz',
                     onSaved: (String value) {
-                      model.notes = value;
+                      //model.notes = value;
                     },
                   ),
                 ),

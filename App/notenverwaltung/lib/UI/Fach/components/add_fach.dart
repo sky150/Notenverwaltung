@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:notenverwaltung/UI/Fach/components/model/fach.dart';
+import 'package:notenverwaltung/models/fach.dart';
 import 'package:notenverwaltung/components/my_bottom_nav_bar.dart';
-import 'package:notenverwaltung/models/global.dart';
+import 'package:notenverwaltung/global.dart';
 
 class AddFach extends StatelessWidget {
   @override
@@ -28,7 +28,7 @@ class TestForm extends StatefulWidget {
 
 class _TestFormState extends State<TestForm> {
   final _formKey = GlobalKey<FormState>();
-  FachModel model = FachModel();
+  Fach model = Fach();
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +55,7 @@ class _TestFormState extends State<TestForm> {
                       return null;
                     },
                     onSaved: (String value) {
-                      model.fachName = value;
+                      //model.fachName = value;
                     },
                   ),
                 ),
@@ -72,7 +72,7 @@ class _TestFormState extends State<TestForm> {
                       return null;
                     },
                     onSaved: (String value) {
-                      model.weight = int.parse(value);
+                      //model.weight = int.parse(value);
                     },
                   ),
                 ),
@@ -91,7 +91,7 @@ class _TestFormState extends State<TestForm> {
                   child: MyTextFormField(
                     labelText: 'Wunschnote',
                     onSaved: (String value) {
-                      model.wishGrade = value;
+                      //model.wishGrade = value;
                     },
                   ),
                 ),

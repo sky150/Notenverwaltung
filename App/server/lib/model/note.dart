@@ -4,8 +4,20 @@ class Note extends ManagedObject<_Noten> implements _Noten {}
 
 class _Noten {
   @primaryKey
-  int id;
+  int note_id;
 
   @Column(unique: false)
-  String note;
+  double note;
+
+  @Column(unique: false)
+  String note_gewichtung;
+
+  @Column(unique: false)
+  DateTime note_datum;
+
+  @Column(unique: false)
+  String note_name;
+
+  @Column(unique: false)
+  int fach_id;
 }

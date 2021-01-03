@@ -85,13 +85,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.5"
-  file:
-    dependency: transitive
-    description:
-      name: file
-      url: "https://pub.dev"
-    source: hosted
-    version: "5.2.1"
   front_end:
     dependency: transitive
     description:
@@ -128,7 +121,7 @@ packages:
     source: hosted
     version: "3.1.4"
   intl:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: intl
       url: "https://pub.dev"
@@ -210,14 +203,14 @@ packages:
       name: node_interop
       url: "https://pub.dev"
     source: hosted
-    version: "1.2.1"
+    version: "1.1.1"
   node_io:
     dependency: transitive
     description:
       name: node_io
       url: "https://pub.dev"
     source: hosted
-    version: "1.2.0"
+    version: "1.1.1"
   node_preamble:
     dependency: transitive
     description:
@@ -436,4 +429,4 @@ packages:
     source: hosted
     version: "2.2.1"
 sdks:
-  dart: ">=2.9.0 <3.0.0"
+  dart: ">=2.7.0 <3.0.0"

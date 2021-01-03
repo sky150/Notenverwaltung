@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:notenverwaltung/UI/home/home_screen.dart';
-import 'models/global.dart';
+import 'global.dart';
 
 void main() {
   runApp(MyApp());
@@ -9,8 +9,6 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    //bloc.registerUser(
-    //   "username", "second", "lastname", "1234232", "username@gmail.com");
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Notenverwaltung',

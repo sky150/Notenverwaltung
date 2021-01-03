@@ -74,12 +74,6 @@
       "languageVersion": "2.3"
     },
     {
-      "name": "file",
-      "rootUri": "file:///C:/Users/Natalie/AppData/Local/Pub/Cache/hosted/pub.dartlang.org/pub_cache-0.2.3/hosted/pub.dev/file-5.2.1",
-      "packageUri": "lib/",
-      "languageVersion": "2.2"
-    },
-    {
       "name": "front_end",
       "rootUri": "file:///C:/Users/Natalie/AppData/Local/Pub/Cache/hosted/pub.dartlang.org/pub_cache-0.2.3/hosted/pub.dev/front_end-0.1.14",
       "packageUri": "lib/",
@@ -177,13 +171,13 @@
     },
     {
       "name": "node_interop",
-      "rootUri": "file:///C:/Users/Natalie/AppData/Local/Pub/Cache/hosted/pub.dartlang.org/pub_cache-0.2.3/hosted/pub.dev/node_interop-1.2.1",
+      "rootUri": "file:///C:/Users/Natalie/AppData/Local/Pub/Cache/hosted/pub.dartlang.org/pub_cache-0.2.3/hosted/pub.dev/node_interop-1.1.1",
       "packageUri": "lib/",
-      "languageVersion": "2.9"
+      "languageVersion": "2.0"
     },
     {
       "name": "node_io",
-      "rootUri": "file:///C:/Users/Natalie/AppData/Local/Pub/Cache/hosted/pub.dartlang.org/pub_cache-0.2.3/hosted/pub.dev/node_io-1.2.0",
+      "rootUri": "file:///C:/Users/Natalie/AppData/Local/Pub/Cache/hosted/pub.dartlang.org/pub_cache-0.2.3/hosted/pub.dev/node_io-1.1.1",
       "packageUri": "lib/",
       "languageVersion": "2.2"
     },
@@ -380,7 +374,7 @@
       "languageVersion": "2.0"
     }
   ],
-  "generated": "2020-12-21T15:30:07.535377Z",
+  "generated": "2021-01-02T17:39:40.882823Z",
   "generator": "pub",
-  "generatorVersion": "2.10.4"
+  "generatorVersion": "2.7.2"
 }

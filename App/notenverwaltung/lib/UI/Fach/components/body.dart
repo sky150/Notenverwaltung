@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:notenverwaltung/UI/Fach/components/add_fach.dart';
 
 import '../../../components/title_with_more_bbtn.dart';
-import 'fach.dart';
+import '../../Cards/fach_card.dart';
 
 class Body extends StatelessWidget {
+  final int semesterId;
+  Body({this.semesterId}) : super();
   @override
   Widget build(BuildContext context) {
     // It will provie us total height  and width of our screen
@@ -23,7 +25,7 @@ class Body extends StatelessWidget {
                       builder: (context) => AddFach(),
                     ));
               }),
-          Fach(),
+          //FachScreen(),
         ],
       ),
     );

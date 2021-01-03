@@ -1,6 +1,7 @@
 import 'package:server/controller/noten_controller.dart';
 import 'package:server/controller/semester_controller.dart';
 
+import 'controller/fach_controller.dart';
 import 'server.dart';
 
 /// This type initializes an application.
@@ -45,7 +46,14 @@ class ServerChannel extends ApplicationChannel {
     });
 
     router.route("/noten/[:id]").link(() => NotenController(context));
+    router
+        .route("/noten/fach_id/[:fach_id]")
+        .link(() => NotenController(context));
     router.route("/semester/[:id]").link(() => SemesterController(context));
+    router.route("/faecher/[:id]").link(() => FachController(context));
+    router
+        .route("/faecher/semester_id/[:semester_id]")
+        .link(() => FachController(context));
 
     return router;
   }
