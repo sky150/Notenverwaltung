@@ -51,14 +51,11 @@ class NoteCard extends StatelessWidget {
               ),
               child: Row(
                 children: <Widget>[
+                  Text("\n"),
                   RichText(
                     text: TextSpan(
-                      children: [
-                        TextSpan(
-                            text: "$noteName\n".toUpperCase(),
-                            style: Theme.of(context).textTheme.button),
-                      ],
-                    ),
+                        text: "$noteName".toUpperCase(),
+                        style: Theme.of(context).textTheme.button),
                   ),
                   Spacer(),
                   Text('$note',

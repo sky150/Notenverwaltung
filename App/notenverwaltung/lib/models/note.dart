@@ -7,7 +7,7 @@ class Note {
   int id;
   double note;
   String gewichtung;
-  DateTime datum;
+  String datum;
   String name;
   int fachId;
 
@@ -18,28 +18,6 @@ class Note {
       this.datum,
       this.name,
       this.fachId});
-
-  factory Note.fromJson(Map<String, dynamic> json) {
-    Note newFach = Note(
-      id: json['note_id'],
-      note: json['note'],
-      gewichtung: json['note_gewichtung'],
-      datum: json['note_datum'],
-      name: json['note_name'],
-      fachId: json['fach_id'],
-    );
-    return newFach;
-  }
-  factory Note.fromNote(Note anotherNote) {
-    return Note(
-      id: anotherNote.id,
-      note: anotherNote.note,
-      gewichtung: anotherNote.gewichtung,
-      datum: anotherNote.datum,
-      name: anotherNote.name,
-      fachId: anotherNote.fachId,
-    );
-  }
 }
 
 //Controller
@@ -73,7 +51,7 @@ List<Note> createNoteList(List data) {
     int id = data[i]["note_id"];
     double note = data[i]["note"];
     String gewichtung = data[i]["note_gewichtung"];
-    DateTime datum = data[i]["note_datum"];
+    String datum = data[i]["note_datum"];
     //dateFormatted = formatter.format(datum);
     String name = data[i]["note_name"];
     int fachId = data[i]["fach_id"];
