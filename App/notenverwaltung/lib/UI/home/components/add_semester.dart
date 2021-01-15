@@ -23,28 +23,7 @@ class AddSemester extends StatefulWidget {
 class _TestFormState extends State<AddSemester> {
   Semester semester = new Semester();
   bool isLoadedSemester = false;
-  static const _semesterUrl = 'http://10.0.2.2:8888/semester';
-  static final _headers = {'Content-Type': 'application/json'};
 
-  createSemester() async {
-    final response = await http.post(_semesterUrl,
-        headers: _headers,
-        body: json.encode({
-          'name': name.text,
-          'durchschnitt': 0.0,
-          'jahr': jahr.text,
-          'notiz': notiz.text
-        }));
-    if (response.statusCode == 200) {
-      print(response.body.toString());
-      return response;
-    } else {
-      print(response.statusCode);
-      print(response.body);
-    }
-  }
-
-  final _formKey = GlobalKey<FormState>();
   AddSemester model;
   var name = TextEditingController();
   var jahr = TextEditingController();
@@ -91,69 +70,95 @@ class DetailSemester extends StatefulWidget {
 class _DetailSemesterState extends State<DetailSemester> {
   Semester semester = new Semester();
   bool isLoadedSemester = false;
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     final halfMediaWidth = MediaQuery.of(context).size.width / 2.0;
     // TODO: implement build
-    if (isLoadedSemester == false) {
+    if (widget.semester.id == null) {
+      setState(() {
+        this.isLoadedSemester = false;
+      });
+    } else {
       setState(() {
         this.semester = Semester.fromFach(widget.semester);
         this.isLoadedSemester = true;
       });
     }
+
+    TextEditingController semesterName =
+        TextEditingController(text: this.semester.name);
+    TextEditingController semesterJahr =
+        TextEditingController(text: this.semester.jahr);
+    TextEditingController semesterNotiz =
+        TextEditingController(text: this.semester.notiz);
+
     final MyTextFormField txtName = MyTextFormField(
-      controller: TextEditingController(text: this.semester.name),
+      controller: semesterName,
       labelText: 'Semester Name',
       validator: (String value) {
         if (value.isEmpty) {
           return 'Gib den Semester Name ein';
         }
+        if (value.length > 40) {
+          return 'Semester Name zu lang';
+        }
         return null;
       },
+      textAlign: TextAlign.left,
+      autocorrect: false,
       onChanged: (text) {
-        setState(() {
-          this.semester.name = text;
-        });
+        print(text);
       },
     );
     final MyTextFormField txtJahr = MyTextFormField(
-      controller: TextEditingController(text: this.semester.jahr),
+      controller: semesterJahr,
       labelText: 'Jahr',
       validator: (String value) {
         if (value.isEmpty) {
           return 'Gib den Jahr ein';
         }
+        if (value.length != 4) {
+          return 'Ungültiges Jahr';
+        }
         return null;
       },
+      textAlign: TextAlign.left,
+      autocorrect: false,
       onChanged: (text) {
-        setState(() {
-          this.semester.jahr = text;
-        });
+        print(text);
       },
     );
     final MyTextArea txtNotiz = MyTextArea(
       labelText: 'Notiz',
-      controller: TextEditingController(text: this.semester.notiz),
+      controller: semesterNotiz,
       onChanged: (text) {
-        setState(() {
-          this.semester.notiz = text;
-        });
+        print(text);
       },
     );
     final btnSave = RaisedButton(
       color: kPrimaryColor,
       onPressed: () async {
-        Map<String, dynamic> params = Map<String, dynamic>();
-        params["id"] = this.semester.id.toString();
-        params["name"] = this.semester.name;
-        params["jahr"] = this.semester.jahr;
-        params["durchschnitt"] = this.semester.durchschnitt;
-        params["notiz"] = this.semester.notiz;
-        await updateSemester(params);
-        //Navigator.pop(context);
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => HomeScreen()));
+        if (_formKey.currentState.validate()) {
+          if (isLoadedSemester) {
+            print("entered in update");
+            await updateSemester(this.semester.id, this.semester.durchschnitt,
+                semesterName, semesterJahr, semesterNotiz);
+          } else {
+            await createSemester(semesterName, semesterJahr, semesterNotiz);
+            print("entered in create");
+          }
+          Timer(Duration(seconds: 1), () {
+            Navigator.pop(context);
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => HomeScreen(),
+              ),
+            );
+          });
+        }
       },
       child: Text(
         'Speichern',
@@ -169,24 +174,12 @@ class _DetailSemesterState extends State<DetailSemester> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            Container(
-                alignment: Alignment.topCenter,
-                width: halfMediaWidth * 2,
-                child: txtName),
-            Container(
-                alignment: Alignment.topCenter,
-                width: halfMediaWidth * 2,
-                child: txtJahr),
-            Container(
-                alignment: Alignment.topCenter,
-                width: halfMediaWidth * 2,
-                child: txtNotiz),
-            Container(
-                alignment: Alignment.topCenter,
-                width: halfMediaWidth * 2,
-                child: btnSave)
+            Container(alignment: Alignment.topCenter, child: txtName),
+            Container(alignment: Alignment.topCenter, child: txtJahr),
+            Container(alignment: Alignment.topCenter, child: txtNotiz),
+            Container(alignment: Alignment.topCenter, child: btnSave)
           ],
         ));
-    return container;
+    return Form(key: _formKey, child: container);
   }
 }

@@ -69,12 +69,14 @@ class SemesterCard extends StatelessWidget {
                   Spacer(),
                   Text('$semesterAvg',
                       style: Theme.of(context).textTheme.button.copyWith(
-                            color: ((this.semesterAvg < 4.0)
-                                ? kTextRed
-                                : (this.semesterAvg < 5.0 &&
-                                        this.semesterAvg > 4.0)
-                                    ? kTextYellow
-                                    : kTextGreen),
+                            color: ((this.semesterAvg == null)
+                                ? Colors.transparent
+                                : (this.semesterAvg < 4.0)
+                                    ? kTextRed
+                                    : (this.semesterAvg < 5.0 &&
+                                            this.semesterAvg > 4.0)
+                                        ? kTextYellow
+                                        : kTextGreen),
                           ))
                 ],
               ),

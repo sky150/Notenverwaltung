@@ -6,7 +6,9 @@ class MyTextFormField extends StatelessWidget {
   final Function validator;
   final Function onSaved;
   final Function onChanged;
+  final TextAlign textAlign;
   final String labelText;
+  final bool autocorrect;
 
   MyTextFormField({
     this.onChanged,
@@ -14,6 +16,8 @@ class MyTextFormField extends StatelessWidget {
     this.labelText,
     this.validator,
     this.onSaved,
+    this.textAlign,
+    this.autocorrect,
   });
 
   @override
@@ -23,18 +27,20 @@ class MyTextFormField extends StatelessWidget {
       child: TextFormField(
         controller: controller,
         decoration: InputDecoration(
-            labelText: labelText,
-            hoverColor: kPrimaryColor,
-            focusColor: kPrimaryColor,
-            fillColor: kPrimaryColor
-            //contentPadding: EdgeInsets.all(10.0),
-            //border: InputBorder.none,
-            //filled: true,
-            //fillColor: Colors.grey[200],
-            ),
+          labelText: labelText,
+          hoverColor: kPrimaryColor,
+          focusColor: kPrimaryColor,
+          fillColor: kPrimaryColor,
+          //contentPadding: EdgeInsets.all(10.0),
+          //border: InputBorder.none,
+          //filled: true,
+          //fillColor: Colors.grey[200],
+        ),
         validator: validator,
         onSaved: onSaved,
         onChanged: onChanged,
+        textAlign: textAlign,
+        autocorrect: autocorrect,
       ),
     );
   }

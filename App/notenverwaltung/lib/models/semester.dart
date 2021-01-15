@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:notenverwaltung/global.dart';
 import 'dart:convert';
@@ -95,27 +96,37 @@ Future<Semester> getSemesterById(int id) async {
   }
 }
 
-Future<Semester> updateSemester(Map<String, dynamic> params) async {
-  final response =
-      await http.put('$URL_SEMESTER/${params["id"]}', body: params);
-  print('response = $response');
+Future updateSemester(int semesterId, double durchschnitt,
+    TextEditingController name, jahr, notiz) async {
+  final response = await http.put('$URL_SEMESTER/$semesterId',
+      headers: URL_HEADERS,
+      body: json.encode({
+        'semester_name': name.text,
+        'semester_durchschnitt': durchschnitt,
+        'semester_jahr': jahr.text,
+        'semester_notiz': notiz.text
+      }));
+  print("id: $semesterId name: ${name.text}");
   if (response.statusCode == 200) {
-    final responseBody = await json.decode(response.body);
-    return Semester.fromJson(responseBody);
+    print(response.statusCode);
+    return response;
   } else {
-    throw Exception('Failes to update a Task. Error${response.toString()}');
+    print(response.statusCode);
+    print(response.body);
+    //throw Exception('Failes to update a Task. Error${response.toString()}');
   }
 }
 
-Future createSemester(Semester semester) async {
+Future createSemester(TextEditingController name, jahr, notiz) async {
   final response = await http.post(URL_SEMESTER,
       headers: URL_HEADERS,
       body: json.encode({
-        'name': semester.name,
-        'durchschnitt': 0.0,
-        'jahr': semester.jahr,
-        'notiz': semester.notiz
+        'semester_name': name.text,
+        'semester_durchschnitt': null,
+        'semester_jahr': jahr.text,
+        'semester_notiz': notiz.text
       }));
+  print("somethin happend in create");
   if (response.statusCode == 200) {
     print(response.body.toString());
     return response;
