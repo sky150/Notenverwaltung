@@ -140,9 +140,21 @@ class FachScreen extends StatelessWidget {
                     : Center(child: CircularProgressIndicator());
               },
             ),
-            Text(" "),
-            Text('Notenschnitt: 4.45'),
-            Text('Pluspunkte: -0.5'),
+            Center(
+              child: Column(
+                children: [
+                  Text(" ", textAlign: TextAlign.center),
+                  Text(
+                    'Notenschnitt: 4.45',
+                    textAlign: TextAlign.center,
+                  ),
+                  Text(
+                    'Pluspunkte: -0.5',
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
 
             //       Text("List task here"),
             //       Text('Notenschnitt: 4.45'),

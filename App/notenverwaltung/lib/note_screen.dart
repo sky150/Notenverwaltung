@@ -137,9 +137,21 @@ class NoteScreen extends StatelessWidget {
                     : Center(child: CircularProgressIndicator());
               },
             ),
-            Text(" "),
-            Text('Notenschnitt: 4.45'),
-            Text('Wunschnote: -0.5'),
+            Center(
+              child: Column(
+                children: [
+                  Text(" ", textAlign: TextAlign.center),
+                  Text(
+                    'Notenschnitt: 4.45',
+                    textAlign: TextAlign.center,
+                  ),
+                  Text(
+                    'Wunschnote: 5.55',
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
