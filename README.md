@@ -12,7 +12,4 @@ Activate environment Python:
 4. exit()
 5. deactivate
 
-Start python server:
-cd C:\Users\Natalie\notenverwaltung\Backend
-python run.py
-open http://127.0.0.1:5000/api/register
+Start aqueduct server: aqueduct serve
