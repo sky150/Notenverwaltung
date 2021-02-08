@@ -7,7 +7,6 @@ import 'models/semester.dart';
 
 class SemesterList extends StatelessWidget {
   final List<Semester> semester;
-
   SemesterList({Key key, this.semester}) : super(key: key);
   @override
   Widget build(BuildContext context) {
@@ -92,71 +91,6 @@ class SemesterList extends StatelessWidget {
       shrinkWrap: true,
     );
   }
-
-  // scrollDirection: Axis.vertical,
-  // physics: NeverScrollableScrollPhysics(),
-  // shrinkWrap: true,
-  // itemCount: snapshot.data.length,
-  // itemBuilder: (context, index) {
-  //   var semester = snapshot.data[index];
-  //   return Dismissible(
-  //       key: Key(semester.id.toString()),
-  //       background: Container(color: Colors.red),
-  //       child: SemesterCard(
-  //         semesterName: semester.name,
-  //         year: semester.jahr,
-  //         semesterAvg: semester.durchschnitt,
-  //         press: () {
-  //           Navigator.push(
-  //             context,
-  //             MaterialPageRoute(
-  //               //DetailsScreen()
-  //               builder: (context) => FachScreen(),
-  //             ),
-  //           );
-  //         },
-  //         longPress: () {
-  //           Navigator.push(
-  //             context,
-  //             MaterialPageRoute(
-  //               //DetailsScreen()
-  //               builder: (context) => AddSemester(
-  //                   semesterId: semester.id,
-  //                   name: semester.name,
-  //                   jahr: semester.jahr,
-  //                   notiz: semester.notiz),
-  //             ),
-  //           );
-  //         },
-  //       ),
-  //       confirmDismiss: (direction) async {
-  //         //if (direction == DismissDirection.endToStart) {
-  //         final bool res = await showDialog(
-  //             context: context,
-  //             builder: (BuildContext context) {
-  //               return AlertDialog(
-  //                 title: new Text("${semester.name}"),
-  //                 content: Text(
-  //                     "Wollen sie ${semester.name} wirklich löschen?"),
-  //                 actions: <Widget>[
-  //                   FlatButton(
-  //                       onPressed: () => Navigator.of(context).pop(),
-  //                       child: const Text("ABBRECHEN")),
-  //                   FlatButton(
-  //                     onPressed: () {
-  //                       Navigator.of(context).pop(true);
-  //                       if ('DONE' == deleteSemester(semester.id)) {
-  //                         snapshot.data.removeAt(index);
-  //                       }
-  //                     },
-  //                     child: const Text("LÖSCHEN"),
-  //                   ),
-  //                 ],
-  //               );
-  //             });
-  //         return res;
-  //       });
-  // });
 }
 
 enum HttpRequestStatus { NOT_DONE, DONE, ERROR }

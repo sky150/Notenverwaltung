@@ -1,6 +1,7 @@
 import 'package:http/http.dart' as http;
 import 'package:notenverwaltung/global.dart';
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
 
 class Fach {
   int id;
@@ -89,4 +90,57 @@ Future deleteFach(int id) async {
     status = 'NOT_DONE';
   }
   return status;
+}
+
+Future<Fach> getFachById(int id) async {
+  final url = '$URL_FAECHER/$id';
+  final response = await http.get(url, headers: URL_HEADERS);
+  if (response.statusCode == 200) {
+    Map<String, dynamic> mapResponse = json.decode(response.body);
+    return Fach.fromJson(mapResponse);
+  } else {
+    return Fach();
+  }
+}
+
+Future updateFach(int fachId, double durchschnitt, TextEditingController name,
+    gewichtung) async {
+  final response = await http.put('$URL_FAECHER/$fachId',
+      headers: URL_HEADERS,
+      body: json.encode({
+        'fach_name': name.text,
+        'fach_gewichtung': gewichtung.text,
+        'fach_durchschnitt': durchschnitt,
+        //'semester_id': semesterId
+      }));
+  print("id: $fachId name: ${name.text}");
+  if (response.statusCode == 200) {
+    print(response.statusCode);
+    return response;
+  } else {
+    print(response.statusCode);
+    print(response.body);
+    //throw Exception('Failes to update a Task. Error${response.toString()}');
+  }
+}
+
+Future createFach(
+    TextEditingController name, gewichtung, int semesterId) async {
+  final response = await http.post(URL_FAECHER,
+      headers: URL_HEADERS,
+      body: json.encode({
+        'fach_name': name.text,
+        'fach_gewichtung': gewichtung.text,
+        'fach_durchschnitt': null,
+        'semester_id': semesterId
+      }));
+  print("somethin happend in create");
+  print(name.text + "  " + gewichtung.text + "  " + semesterId.toString());
+  if (response.statusCode == 200) {
+    print(response.body.toString());
+    return response;
+  } else {
+    print(response.statusCode);
+    print(response.body);
+  }
 }

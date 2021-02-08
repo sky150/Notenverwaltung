@@ -69,11 +69,13 @@ class FachCard extends StatelessWidget {
                   Spacer(),
                   Text('$fachAvg',
                       style: Theme.of(context).textTheme.button.copyWith(
-                            color: ((this.fachAvg < 4.0)
-                                ? kTextRed
-                                : (this.fachAvg < 5.0 && this.fachAvg > 4.0)
-                                    ? kTextYellow
-                                    : kTextGreen),
+                            color: ((this.fachAvg == null)
+                                ? Colors.transparent
+                                : (this.fachAvg < 4.0)
+                                    ? kTextRed
+                                    : (this.fachAvg < 5.0 && this.fachAvg > 4.0)
+                                        ? kTextYellow
+                                        : kTextGreen),
                           ))
                 ],
               ),

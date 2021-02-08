@@ -18,6 +18,25 @@ class Note {
       this.datum,
       this.name,
       this.fachId});
+  factory Note.fromNote(Note anotherNote) {
+    return Note(
+      id: anotherNote.id,
+      note: anotherNote.note,
+      gewichtung: anotherNote.gewichtung,
+      datum: anotherNote.datum,
+      name: anotherNote.name,
+      fachId: anotherNote.fachId,
+    );
+  }
+  factory Note.fromJson(Map<String, dynamic> json) {
+    return Note(
+        id: json['note_id'],
+        note: json['note'],
+        gewichtung: json['note_gewichtung'],
+        name: json['note_name'],
+        datum: json['note_datum'],
+        fachId: json['fach_id']);
+  }
 }
 
 //Controller
@@ -79,4 +98,15 @@ Future deleteNote(int id) async {
     status = 'NOT_DONE';
   }
   return status;
+}
+
+Future<Note> getNoteById(int id) async {
+  final url = '$URL_NOTEN/$id';
+  final response = await http.get(url, headers: URL_HEADERS);
+  if (response.statusCode == 200) {
+    Map<String, dynamic> mapResponse = json.decode(response.body);
+    return Note.fromJson(mapResponse);
+  } else {
+    return Note();
+  }
 }

@@ -1,14 +1,43 @@
 import 'package:flutter/material.dart';
+import 'package:notenverwaltung/UI/TextFields/MyTextFormField.dart';
 import 'package:notenverwaltung/components/my_bottom_nav_bar.dart';
 import 'package:notenverwaltung/global.dart';
 import 'package:intl/intl.dart';
+import 'package:notenverwaltung/models/note.dart';
 
-class AddNote extends StatelessWidget {
+class AddNote extends StatefulWidget {
+  final int id;
+  AddNote({this.id}) : super();
+
+  @override
+  State<StatefulWidget> createState() {
+    // TODO: implement createState
+    return TestForm(fachId: id);
+  }
+}
+
+class TestForm extends State<AddNote> {
+  final int fachId;
+  //Note note = Note();
+  bool isLoadedSemester = false;
+  TestForm({this.fachId}) : super();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: buildAppBar(),
-      body: TestForm(),
+      body: FutureBuilder(
+        future: getNoteById(widget.id),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) print(snapshot.error);
+          if (snapshot.hasData) {
+            //
+            return TestFormState(note: snapshot.data, fachId: fachId);
+          } else {
+            return Center(child: CircularProgressIndicator());
+          }
+        },
+      ),
       bottomNavigationBar: MyBottomNavBar(),
     );
   }
@@ -21,16 +50,27 @@ class AddNote extends StatelessWidget {
   }
 }
 
-class TestForm extends StatefulWidget {
+class TestFormState extends StatefulWidget {
+  final Note note;
+  final int fachId;
+  TestFormState({Key key, this.note, this.fachId}) : super(key: key);
+
   @override
-  _TestFormState createState() => _TestFormState();
+  State<StatefulWidget> createState() {
+    // TODO: implement createState
+    return _TestFormState(fachId: fachId);
+  }
 }
 
-class _TestFormState extends State<TestForm> {
+class _TestFormState extends State<TestFormState> {
+  Note note = new Note();
+  final int fachId;
+  _TestFormState({this.note, this.fachId}) : super();
   final _formKey = GlobalKey<FormState>();
   //NoteModel model = NoteModel();
   final DateFormat formatter = DateFormat('dd.MM.yyyy');
   DateTime selectedDate = DateTime.now();
+  bool isLoadedSemester = false;
 
   _selectDate(BuildContext context) async {
     final DateTime picked = await showDatePicker(
@@ -59,6 +99,25 @@ class _TestFormState extends State<TestForm> {
   @override
   Widget build(BuildContext context) {
     final halfMediaWidth = MediaQuery.of(context).size.width / 2.0;
+    if (widget.note.id == null) {
+      setState(() {
+        this.isLoadedSemester = false;
+      });
+    } else {
+      setState(() {
+        this.note = Note.fromNote(widget.note);
+        this.isLoadedSemester = true;
+      });
+    }
+
+    TextEditingController noteNote =
+        TextEditingController(text: this.note.note.toString());
+    TextEditingController noteGewichtung =
+        TextEditingController(text: this.note.gewichtung);
+    TextEditingController noteDatum =
+        TextEditingController(text: this.note.datum);
+    TextEditingController noteName =
+        TextEditingController(text: this.note.name);
 
     return Form(
       key: _formKey,
@@ -73,6 +132,7 @@ class _TestFormState extends State<TestForm> {
                   alignment: Alignment.topCenter,
                   width: halfMediaWidth * 2,
                   child: MyTextNumberField(
+                    controller: noteNote,
                     labelText: 'Note',
                     validator: (String value) {
                       double note = double.parse(value);
@@ -90,6 +150,7 @@ class _TestFormState extends State<TestForm> {
                   alignment: Alignment.topCenter,
                   width: halfMediaWidth * 2,
                   child: MyTextNumberField(
+                    controller: noteGewichtung,
                     labelText: 'Gewichtung',
                     validator: (String value) {
                       int weight = int.parse(value);
@@ -107,10 +168,11 @@ class _TestFormState extends State<TestForm> {
                   alignment: Alignment.topCenter,
                   width: halfMediaWidth * 2,
                   child: MyTextFormField(
-                    labelText: 'Fach',
+                    controller: noteName,
+                    labelText: 'Name',
                     validator: (String value) {
                       if (value.isEmpty) {
-                        return 'Gib den Fach ein';
+                        return 'Gib den Namen ein';
                       }
                       return null;
                     },
@@ -125,39 +187,30 @@ class _TestFormState extends State<TestForm> {
                   child: Padding(
                     padding: const EdgeInsets.all(kDefaultPadding),
                     child: TextFormField(
-                      onTap: () {
-                        setState(() {
-                          _selectDate(context);
-                        });
-                      },
+                      controller: noteDatum,
+                      // onTap: () {
+                      //   setState(() {
+                      //     _selectDate(context);
+                      //   });
+                      // },
                       decoration: InputDecoration(
-                        suffixIcon: Icon(Icons.arrow_drop_down),
+                        //suffixIcon: Icon(Icons.arrow_drop_down),
                         hintText: formatter.format(selectedDate),
                         contentPadding: EdgeInsets.all(10.0),
                         border: InputBorder.none,
                         filled: true,
                         fillColor: Colors.grey[200],
                       ),
-                      validator: (String value) {
-                        if (value.isEmpty) {
-                          return 'Gib den Datum ein';
-                        }
-                        return null;
-                      },
+                      // validator: (String value) {
+                      //   if (value.isEmpty) {
+                      //     return 'Gib den Datum ein';
+                      //   }
+                      //   return null;
+                      // },
                       onSaved: (String value) {
                         //model.fach = value;
                       },
                     ),
-                  ),
-                ),
-                Container(
-                  alignment: Alignment.topCenter,
-                  width: halfMediaWidth * 2,
-                  child: MyTextArea(
-                    labelText: 'Notiz',
-                    onSaved: (String value) {
-                      //model.notes = value;
-                    },
                   ),
                 ),
                 Container(
@@ -166,7 +219,7 @@ class _TestFormState extends State<TestForm> {
                     color: kPrimaryColor,
                     onPressed: () {
                       if (_formKey.currentState.validate()) {
-                        _formKey.currentState.save();
+                        //_formKey.currentState.save();
                         Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -191,42 +244,14 @@ class _TestFormState extends State<TestForm> {
   }
 }
 
-class MyTextFormField extends StatelessWidget {
-  final Function validator;
-  final Function onSaved;
-  final String labelText;
-
-  MyTextFormField({
-    this.labelText,
-    this.validator,
-    this.onSaved,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(kDefaultPadding),
-      child: TextFormField(
-        decoration: InputDecoration(
-          labelText: labelText,
-          contentPadding: EdgeInsets.all(10.0),
-          border: InputBorder.none,
-          filled: true,
-          fillColor: Colors.grey[200],
-        ),
-        validator: validator,
-        onSaved: onSaved,
-      ),
-    );
-  }
-}
-
 class MyTextNumberField extends StatelessWidget {
+  final TextEditingController controller;
   final Function validator;
   final Function onSaved;
   final String labelText;
 
   MyTextNumberField({
+    this.controller,
     this.labelText,
     this.validator,
     this.onSaved,
@@ -238,6 +263,7 @@ class MyTextNumberField extends StatelessWidget {
       padding: EdgeInsets.all(kDefaultPadding),
       child: TextFormField(
         keyboardType: TextInputType.number,
+        controller: controller,
         decoration: InputDecoration(
           labelText: labelText,
           contentPadding: EdgeInsets.all(10.0),

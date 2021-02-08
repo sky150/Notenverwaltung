@@ -72,6 +72,31 @@ List<Semester> createSemesterList(List data) {
   return list;
 }
 
+/*Future<double> getAvg(int id) async {
+  final response = await http.get('$URL_FAECHER_BY_SEMESTER$id');
+  List responseJson = json.decode(response.body.toString());
+  String res =
+      responseJson.map((e) => e['fach_durchschnitt']).reduce((a, b) => a + b) /
+          responseJson.length;
+  print(res);
+  double avg = double.parse(res);
+  if (response.statusCode == 200) {
+    return avg;
+  } else {
+    throw Exception('Failed to load note');
+  }
+}
+
+double avg(int id) {
+  double avg = double.parse(getAvg(id).toString());
+
+  /*for (int i = 0; i < data.length; i++) {
+    double durchschnitt = data[i]["semester_durchschnitt"];
+    list.add(durchschnitt);
+  }*/
+  return avg;
+}*/
+
 Future deleteSemester(int id) async {
   String status = '';
   final url = '$URL_SEMESTER/$id';

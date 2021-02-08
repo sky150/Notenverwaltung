@@ -147,7 +147,7 @@ class _DetailSemesterState extends State<DetailSemester> {
                 semesterName, semesterJahr, semesterNotiz);
           } else {
             await createSemester(semesterName, semesterJahr, semesterNotiz);
-            print("entered in create");
+            print("entered in create semester");
           }
           Timer(Duration(seconds: 1), () {
             Navigator.pop(context);

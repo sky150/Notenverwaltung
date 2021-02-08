@@ -47,16 +47,12 @@ class SemesterList extends StatelessWidget {
                         );
                       },
                       longPress: () {
+                        int selectedId = fach[index].id;
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              //DetailsScreen()
-                              // builder: (context) => AddSemester(
-                              //     semesterId: semester.id,
-                              //     name: semester.name,
-                              //     jahr: semester.jahr,
-                              //     notiz: semester.notiz),
-                              ),
+                            builder: (context) => AddFach(id: selectedId),
+                          ),
                         );
                       },
                     ),
@@ -116,10 +112,11 @@ class FachScreen extends StatelessWidget {
             TitleWithMoreBtn(
                 title: "Fächer",
                 press: () {
+                  print("Fachscreen id: " + semesterId.toString());
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => AddFach(),
+                        builder: (context) => AddFach(id: semesterId),
                       ));
                 }),
             //FachScreen(),
