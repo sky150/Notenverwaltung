@@ -1,18 +1,23 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:notenverwaltung/UI/TextFields/MyTextFormField.dart';
 import 'package:notenverwaltung/components/my_bottom_nav_bar.dart';
 import 'package:notenverwaltung/global.dart';
 import 'package:intl/intl.dart';
 import 'package:notenverwaltung/models/note.dart';
+import 'package:notenverwaltung/note_screen.dart';
 
 class AddNote extends StatefulWidget {
   final int id;
-  AddNote({this.id}) : super();
+  final int fachId;
+  AddNote({this.id, this.fachId}) : super();
 
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
-    return TestForm(fachId: id);
+    print("AddNote id= " + id.toString() + " fachId: " + fachId.toString());
+    return TestForm(fachId: fachId);
   }
 }
 
@@ -53,7 +58,7 @@ class TestForm extends State<AddNote> {
 class TestFormState extends StatefulWidget {
   final Note note;
   final int fachId;
-  TestFormState({Key key, this.note, this.fachId}) : super(key: key);
+  TestFormState({this.note, this.fachId}) : super();
 
   @override
   State<StatefulWidget> createState() {
@@ -65,7 +70,7 @@ class TestFormState extends StatefulWidget {
 class _TestFormState extends State<TestFormState> {
   Note note = new Note();
   final int fachId;
-  _TestFormState({this.note, this.fachId}) : super();
+  _TestFormState({this.fachId}) : super();
   final _formKey = GlobalKey<FormState>();
   //NoteModel model = NoteModel();
   final DateFormat formatter = DateFormat('dd.MM.yyyy');
@@ -109,13 +114,25 @@ class _TestFormState extends State<TestFormState> {
         this.isLoadedSemester = true;
       });
     }
+    print("ForeignKey fach id: " + this.fachId.toString());
 
-    TextEditingController noteNote =
-        TextEditingController(text: this.note.note.toString());
-    TextEditingController noteGewichtung =
-        TextEditingController(text: this.note.gewichtung);
-    TextEditingController noteDatum =
-        TextEditingController(text: this.note.datum);
+    String noteValue = this.note.note.toString();
+    TextEditingController noteNote = TextEditingController(text: noteValue);
+    TextEditingController noteGewichtung;
+    if (this.note.datum != null) {
+      noteGewichtung = TextEditingController(text: this.note.gewichtung);
+    } else {
+      noteGewichtung = TextEditingController()..text = "100";
+    }
+
+    TextEditingController noteDatum;
+    if (this.note.datum != null) {
+      //var parsedDate = DateTime.parse(this.note.datum);
+      noteDatum = TextEditingController(text: this.note.datum);
+    } else {
+      noteDatum = TextEditingController()
+        ..text = formatter.format(selectedDate);
+    }
     TextEditingController noteName =
         TextEditingController(text: this.note.name);
 
@@ -135,15 +152,19 @@ class _TestFormState extends State<TestFormState> {
                     controller: noteNote,
                     labelText: 'Note',
                     validator: (String value) {
+                      //Validation läuft nur BE weiss nicht warum
                       double note = double.parse(value);
-                      if (note < 0.0 || note > 6.0 || note == 0.0) {
+                      if (note < 0.0 ||
+                          note > 6.0 ||
+                          note == 0.0 ||
+                          value.isEmpty) {
                         return 'Gib eine gültige Note ein';
                       }
                       return null;
                     },
-                    onSaved: (String value) {
-                      //model.note = double.parse(value);
-                    },
+                    // onSaved: (String value) {
+                    //   //model.note = double.parse(value);
+                    // },
                   ),
                 ),
                 Container(
@@ -170,6 +191,8 @@ class _TestFormState extends State<TestFormState> {
                   child: MyTextFormField(
                     controller: noteName,
                     labelText: 'Name',
+                    autocorrect: false,
+                    textAlign: TextAlign.left,
                     validator: (String value) {
                       if (value.isEmpty) {
                         return 'Gib den Namen ein';
@@ -194,22 +217,23 @@ class _TestFormState extends State<TestFormState> {
                       //   });
                       // },
                       decoration: InputDecoration(
-                        //suffixIcon: Icon(Icons.arrow_drop_down),
-                        hintText: formatter.format(selectedDate),
-                        contentPadding: EdgeInsets.all(10.0),
-                        border: InputBorder.none,
-                        filled: true,
-                        fillColor: Colors.grey[200],
-                      ),
+                          //suffixIcon: Icon(Icons.arrow_drop_down),
+                          //hintText: formatter.format(selectedDate),
+                          // contentPadding: EdgeInsets.all(10.0),
+                          // border: InputBorder.none,
+                          // filled: true,
+                          // fillColor: Colors.grey[200],
+                          ),
                       // validator: (String value) {
                       //   if (value.isEmpty) {
                       //     return 'Gib den Datum ein';
                       //   }
                       //   return null;
                       // },
-                      onSaved: (String value) {
-                        //model.fach = value;
-                      },
+                      //initialValue: "selectedDate.toString()",
+                      // onSaved: (String value) {
+                      //   value = selectedDate.toString();
+                      // },
                     ),
                   ),
                 ),
@@ -217,14 +241,28 @@ class _TestFormState extends State<TestFormState> {
                   alignment: Alignment.bottomCenter,
                   child: RaisedButton(
                     color: kPrimaryColor,
-                    onPressed: () {
+                    onPressed: () async {
                       if (_formKey.currentState.validate()) {
                         //_formKey.currentState.save();
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                //Result(model: this.model))
-                                builder: (context) => null));
+                        if (isLoadedSemester) {
+                          print("entered in update");
+                          await updateNote(this.note.id, noteNote,
+                              noteGewichtung, noteDatum, noteName);
+                        } else {
+                          print("the id" + this.fachId.toString());
+                          await createNote(noteNote, noteGewichtung, noteDatum,
+                              noteName, this.fachId);
+                          print("entered in create note");
+                        }
+                        Timer(Duration(seconds: 1), () {
+                          Navigator.pop(context);
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  //Result(model: this.model))
+                                  builder: (context) =>
+                                      NoteScreen(fachId: this.note.fachId)));
+                        });
                       }
                     },
                     child: Text(
@@ -239,68 +277,6 @@ class _TestFormState extends State<TestFormState> {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class MyTextNumberField extends StatelessWidget {
-  final TextEditingController controller;
-  final Function validator;
-  final Function onSaved;
-  final String labelText;
-
-  MyTextNumberField({
-    this.controller,
-    this.labelText,
-    this.validator,
-    this.onSaved,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(kDefaultPadding),
-      child: TextFormField(
-        keyboardType: TextInputType.number,
-        controller: controller,
-        decoration: InputDecoration(
-          labelText: labelText,
-          contentPadding: EdgeInsets.all(10.0),
-          border: InputBorder.none,
-          filled: true,
-          fillColor: Colors.grey[200],
-        ),
-        validator: validator,
-        onSaved: onSaved,
-      ),
-    );
-  }
-}
-
-class MyTextArea extends StatelessWidget {
-  final Function onSaved;
-  final String labelText;
-
-  MyTextArea({
-    this.labelText,
-    this.onSaved,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(kDefaultPadding),
-      child: TextFormField(
-        maxLines: 4,
-        decoration: InputDecoration(
-          labelText: labelText,
-          contentPadding: EdgeInsets.all(15.0),
-          border: InputBorder.none,
-          filled: true,
-          fillColor: Colors.grey[200],
-        ),
-        onSaved: onSaved,
       ),
     );
   }

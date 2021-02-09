@@ -116,7 +116,7 @@ class FachScreen extends StatelessWidget {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => AddFach(id: semesterId),
+                        builder: (context) => AddFach(semesterId: semesterId),
                       ));
                 }),
             //FachScreen(),

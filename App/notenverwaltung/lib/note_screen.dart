@@ -36,27 +36,23 @@ class NoteList extends StatelessWidget {
                       noteName: note[index].name,
                       note: note[index].note,
                       press: () {
+                        int selectedId = note[index].id;
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            //DetailsScreen()
-                            builder: (context) => null,
+                            builder: (context) => AddNote(id: selectedId),
                           ),
                         );
                       },
-                      longPress: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              //DetailsScreen()
-                              // builder: (context) => AddSemester(
-                              //     semesterId: semester.id,
-                              //     name: semester.name,
-                              //     jahr: semester.jahr,
-                              //     notiz: semester.notiz),
-                              ),
-                        );
-                      },
+                      // longPress: () {
+                      //   int selectedId = note[index].id;
+                      //   Navigator.push(
+                      //     context,
+                      //     MaterialPageRoute(
+                      //       builder: (context) => AddNote(id: selectedId),
+                      //     ),
+                      //   );
+                      // },
                     ),
                     confirmDismiss: (direction) async {
                       //if (direction == DismissDirection.endToStart) {
@@ -114,10 +110,11 @@ class NoteScreen extends StatelessWidget {
             TitleWithMoreBtn(
                 title: "Noten",
                 press: () {
+                  print("Notescreen id: " + fachId.toString());
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => AddNote(),
+                        builder: (context) => AddNote(fachId: fachId),
                       ));
                 }),
             FutureBuilder(

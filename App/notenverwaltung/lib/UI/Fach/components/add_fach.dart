@@ -9,7 +9,8 @@ import 'dart:async';
 
 class AddFach extends StatefulWidget {
   final int id;
-  AddFach({this.id}) : super();
+  final int semesterId;
+  AddFach({this.id, this.semesterId}) : super();
 
   /*@override
   Widget build(BuildContext context) {
@@ -30,8 +31,11 @@ class AddFach extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
-    print("AddFach id= " + id.toString());
-    return _FormState(semesterId: id);
+    print("AddFach id= " +
+        id.toString() +
+        " semesterId: " +
+        semesterId.toString());
+    return _FormState(semesterId: semesterId);
   }
 }
 
@@ -43,6 +47,11 @@ class _FormState extends State<AddFach> {
 
   @override
   Widget build(BuildContext context) {
+    // int theId = widget.id;
+    // if (theId == semesterId) {
+    //   theId = 0;
+    // }
+    print("Semester id: " + semesterId.toString());
     return Scaffold(
       appBar: buildAppBar(),
       body: FutureBuilder(
@@ -50,6 +59,7 @@ class _FormState extends State<AddFach> {
         builder: (context, snapshot) {
           if (snapshot.hasError) print(snapshot.error);
           if (snapshot.hasData) {
+            print("Widget id: " + widget.id.toString());
             return DetailFach(fach: snapshot.data, semesterId: semesterId);
           } else {
             return Center(child: CircularProgressIndicator());

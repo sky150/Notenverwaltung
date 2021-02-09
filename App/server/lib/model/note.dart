@@ -13,7 +13,7 @@ class _Noten {
   String note_gewichtung;
 
   @Column(unique: false)
-  DateTime note_datum;
+  String note_datum;
 
   @Column(unique: false)
   String note_name;

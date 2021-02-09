@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:notenverwaltung/global.dart';
 import 'dart:convert';
@@ -108,5 +109,51 @@ Future<Note> getNoteById(int id) async {
     return Note.fromJson(mapResponse);
   } else {
     return Note();
+  }
+}
+
+Future updateNote(
+    int noteId, TextEditingController note, gewichtung, datum, name) async {
+  double newNote = double.parse(note.text);
+  final response = await http.put('$URL_NOTEN/$noteId',
+      headers: URL_HEADERS,
+      body: json.encode({
+        'note': newNote,
+        'note_gewichtung': gewichtung.text,
+        'note_datum': datum.text,
+        'note_name': name.text
+      }));
+  print("id: $noteId name: ${name.text}");
+  if (response.statusCode == 200) {
+    print(response.statusCode);
+    return response;
+  } else {
+    print(response.statusCode);
+    print(response.body);
+    //throw Exception('Failes to update a Task. Error${response.toString()}');
+  }
+}
+
+Future createNote(
+    TextEditingController note, gewichtung, datum, name, int fachId) async {
+  double newNote = double.parse(note.text);
+  final response = await http.post(URL_NOTEN,
+      headers: URL_HEADERS,
+      body: json.encode({
+        'note': newNote,
+        'note_gewichtung': gewichtung.text,
+        'note_datum': datum.text,
+        'note_name': name.text,
+        'fach_id': fachId
+      }));
+  print(
+      "note: ${newNote}, gewichtung: ${gewichtung.text}, datum: ${datum.text}, name: ${name.text}, fachId: $fachId");
+  print("somethin happend in create NOTE");
+  if (response.statusCode == 200) {
+    print(response.body.toString());
+    return response;
+  } else {
+    print(response.statusCode);
+    print(response.body.toString());
   }
 }

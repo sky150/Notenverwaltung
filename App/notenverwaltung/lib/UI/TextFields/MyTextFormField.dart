@@ -74,3 +74,37 @@ class MyTextArea extends StatelessWidget {
     );
   }
 }
+
+class MyTextNumberField extends StatelessWidget {
+  final TextEditingController controller;
+  final Function validator;
+  final Function onSaved;
+  final String labelText;
+
+  MyTextNumberField({
+    this.controller,
+    this.labelText,
+    this.validator,
+    this.onSaved,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.all(kDefaultPadding),
+      child: TextFormField(
+        keyboardType: TextInputType.number,
+        controller: controller,
+        decoration: InputDecoration(
+          labelText: labelText,
+          // contentPadding: EdgeInsets.all(10.0),
+          // border: InputBorder.none,
+          // filled: true,
+          // fillColor: Colors.grey[200],
+        ),
+        validator: validator,
+        onSaved: onSaved,
+      ),
+    );
+  }
+}
