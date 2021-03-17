@@ -44,15 +44,6 @@ class NoteList extends StatelessWidget {
                           ),
                         );
                       },
-                      // longPress: () {
-                      //   int selectedId = note[index].id;
-                      //   Navigator.push(
-                      //     context,
-                      //     MaterialPageRoute(
-                      //       builder: (context) => AddNote(id: selectedId),
-                      //     ),
-                      //   );
-                      // },
                     ),
                     confirmDismiss: (direction) async {
                       //if (direction == DismissDirection.endToStart) {
@@ -134,20 +125,37 @@ class NoteScreen extends StatelessWidget {
                     : Center(child: CircularProgressIndicator());
               },
             ),
-            Center(
-              child: Column(
-                children: [
-                  Text(" ", textAlign: TextAlign.center),
-                  Text(
-                    'Notenschnitt: 4.45',
-                    textAlign: TextAlign.center,
-                  ),
-                  Text(
-                    'Wunschnote: 5.55',
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
+            FutureBuilder(
+              future: getNotenschnitt(fachId),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  print(snapshot.error);
+                } else if (snapshot.data == null) {
+                  return Container(
+                    child: Container(
+                      child: Text("Loading..."),
+                    ),
+                  );
+                }
+                return snapshot.hasData
+                    ? Center(
+                        child: Column(
+                          children: [
+                            Text(" ", textAlign: TextAlign.center),
+                            Text(
+                              'Notenschnitt: ' +
+                                  snapshot.data.toStringAsFixed(2),
+                              textAlign: TextAlign.center,
+                            ),
+                            Text(
+                              'Wunschnote: 5.55',
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      )
+                    : Center(child: CircularProgressIndicator());
+              },
             ),
           ],
         ),

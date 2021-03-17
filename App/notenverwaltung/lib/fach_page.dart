@@ -137,6 +137,39 @@ class FachScreen extends StatelessWidget {
                     : Center(child: CircularProgressIndicator());
               },
             ),
+            FutureBuilder(
+              future: getNotenschnittFach(semesterId),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  print(snapshot.error);
+                } else if (snapshot.data == null) {
+                  return Container(
+                    child: Container(
+                      child: Text("Loading..."),
+                    ),
+                  );
+                }
+                return snapshot.hasData
+                    ? Center(
+                        child: Column(
+                          children: [
+                            Text(" ", textAlign: TextAlign.center),
+                            Text(
+                              'Notenschnitt: ' +
+                                  snapshot.data.toStringAsFixed(2),
+                              textAlign: TextAlign.center,
+                            ),
+                            Text(
+                              'Pluspunkte: -0.5',
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      )
+                    : Center(child: CircularProgressIndicator());
+              },
+            ),
+
             Center(
               child: Column(
                 children: [

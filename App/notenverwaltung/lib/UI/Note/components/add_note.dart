@@ -120,7 +120,8 @@ class _TestFormState extends State<TestFormState> {
     TextEditingController noteNote = TextEditingController(text: noteValue);
     TextEditingController noteGewichtung;
     if (this.note.datum != null) {
-      noteGewichtung = TextEditingController(text: this.note.gewichtung);
+      String newNote = this.note.gewichtung.toString();
+      noteGewichtung = TextEditingController(text: newNote);
     } else {
       noteGewichtung = TextEditingController()..text = "100";
     }

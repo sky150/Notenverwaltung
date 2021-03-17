@@ -62,6 +62,39 @@ Future<List<Note>> getNoten(int fachId) async {
   }
 }
 
+//Möchte was ausprobieren: gets anzahlNoten + summe von Noten
+Future<dynamic> getNotenschnitt(int fachId, {note}) async {
+  final response = await http.get('$URL_NOTEN_BY_FACH$fachId');
+  if (response.statusCode == 200) {
+    List responseJson = json.decode(response.body.toString());
+    double noteList = createDurchschnittList(responseJson);
+    print(noteList);
+
+    return noteList;
+  } else {
+    throw Exception('Failed to load note');
+  }
+}
+
+double createDurchschnittList(List data) {
+  if (data.isEmpty) {
+    return 0.0;
+  }
+  double summeN = 0;
+  double summeG = 0;
+  double summeNG = 0;
+
+  for (int i = 0; i < data.length; i++) {
+    summeG = summeG + double.parse(data[i]["note_gewichtung"]) / 100;
+    summeN = summeN + data[i]["note"];
+    summeNG = summeNG +
+        (data[i]["note"] * (double.parse(data[i]["note_gewichtung"]) / 100));
+  }
+  // (note*gewichtung)/summeG
+  double schnitt = summeNG / summeG;
+  return schnitt;
+}
+
 List<Note> createNoteList(List data) {
   List<Note> list = new List();
   //DateFormat formatter = DateFormat('yyyy-MM-dd');
@@ -137,6 +170,9 @@ Future updateNote(
 Future createNote(
     TextEditingController note, gewichtung, datum, name, int fachId) async {
   double newNote = double.parse(note.text);
+  //int newGewichtung = int.parse(gewichtung.text);
+
+  //print(newGewichtung);
   final response = await http.post(URL_NOTEN,
       headers: URL_HEADERS,
       body: json.encode({

@@ -38,6 +38,39 @@ class Fach {
   }
 }
 
+Future<dynamic> getNotenschnittFach(int semesterId) async {
+  final response = await http.get('$URL_FAECHER_BY_SEMESTER$semesterId');
+  if (response.statusCode == 200) {
+    List responseJson = json.decode(response.body.toString());
+    double noteList = createDurchschnittList(responseJson);
+    print(noteList);
+
+    return noteList;
+  } else {
+    throw Exception('Failed to load note');
+  }
+}
+
+double createDurchschnittList(List data) {
+  if (data.isEmpty) {
+    return 0.0;
+  }
+  double summeN = 0;
+  double summeG = 0;
+  double summeNG = 0;
+
+  for (int i = 0; i < data.length; i++) {
+    summeG = summeG + double.parse(data[i]["fach_gewichtung"]) / 100;
+    summeN = summeN + data[i]["fach_durchschnitt"];
+    summeNG = summeNG +
+        (data[i]["fach_durchschnitt"] *
+            (double.parse(data[i]["fach_gewichtung"]) / 100));
+  }
+  // (note*gewichtung)/summeG
+  double schnitt = summeNG / summeG;
+  return schnitt;
+}
+
 //Controller
 Future<List<Fach>> getFaecher(int semesterId) async {
   final response = await http.get('$URL_FAECHER_BY_SEMESTER$semesterId');
