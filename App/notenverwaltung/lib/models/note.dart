@@ -63,7 +63,7 @@ Future<List<Note>> getNoten(int fachId) async {
 }
 
 //Möchte was ausprobieren: gets anzahlNoten + summe von Noten
-Future<dynamic> getNotenschnitt(int fachId, {note}) async {
+Future<dynamic> getNotenschnitt(int fachId) async {
   final response = await http.get('$URL_NOTEN_BY_FACH$fachId');
   if (response.statusCode == 200) {
     List responseJson = json.decode(response.body.toString());

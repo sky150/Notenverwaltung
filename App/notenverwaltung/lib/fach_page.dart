@@ -6,15 +6,20 @@ import 'package:notenverwaltung/global.dart';
 import 'package:notenverwaltung/note_screen.dart';
 import 'UI/Cards/fach_card.dart';
 import 'models/fach.dart';
+import 'models/note.dart';
 
 class SemesterList extends StatelessWidget {
   final List<Fach> fach;
 
-  SemesterList({Key key, this.fach}) : super(key: key);
+  SemesterList({Key key, this.fach, this.isNumber, this.number})
+      : super(key: key);
+  List<double> number;
+  bool isNumber = false;
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
     Size size = MediaQuery.of(context).size;
+    print("Anfang im number" + this.number.toString());
     return ListView.builder(
       itemBuilder: (context, index) {
         return GestureDetector(
@@ -29,13 +34,41 @@ class SemesterList extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
+                FutureBuilder(
+                    future: getNotenschnitt(fach[index].id),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasError) {
+                        print(snapshot.error);
+                      } else if (snapshot.data == null) {
+                        return null;
+                      }
+                      if (index == null) {
+                        return null;
+                      } else {
+                        this.number.add(
+                            double.parse(snapshot.data.toStringAsFixed(2)));
+                      }
+                      for (int i = 0; i < fach.length; i++) {
+                        /*print("Nummer" +
+                            fach[index].id.toString() +
+                            " double: " +
+                            this.number.toString());*/
+                        print("For schleife");
+                        print(this.number[index]);
+                      }
+                      print("WAs in der Variable number steht:" +
+                          this.number.toString());
+                      return snapshot.hasData
+                          ? Container(width: 0.0, height: 0.0)
+                          : null;
+                    }),
                 Dismissible(
                     key: Key(fach[index].id.toString()),
                     background: Container(color: Colors.red),
                     child: FachCard(
                       fachName: fach[index].name,
                       weight: fach[index].gewichtung,
-                      fachAvg: fach[index].durchschnitt,
+                      fachAvg: this.number[index],
                       press: () {
                         Navigator.push(
                           context,
@@ -133,7 +166,8 @@ class FachScreen extends StatelessWidget {
                   );
                 }
                 return snapshot.hasData
-                    ? SemesterList(fach: snapshot.data)
+                    ? SemesterList(
+                        fach: snapshot.data, number: [5.25], isNumber: false)
                     : Center(child: CircularProgressIndicator());
               },
             ),
@@ -185,13 +219,6 @@ class FachScreen extends StatelessWidget {
                 ],
               ),
             ),
-
-            //       Text("List task here"),
-            //       Text('Notenschnitt: 4.45'),
-            //       Text('Pluspunkte: -0.5'),
-            //     ],
-            //   ),
-            // ),
           ],
         ),
       ),
