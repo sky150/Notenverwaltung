@@ -153,7 +153,6 @@ class _TestFormState extends State<TestFormState> {
                     controller: noteNote,
                     labelText: 'Note',
                     validator: (String value) {
-                      //Validation läuft nur BE weiss nicht warum
                       double note = double.parse(value);
                       if (note < 0.0 ||
                           note > 6.0 ||
@@ -163,9 +162,6 @@ class _TestFormState extends State<TestFormState> {
                       }
                       return null;
                     },
-                    // onSaved: (String value) {
-                    //   //model.note = double.parse(value);
-                    // },
                   ),
                 ),
                 Container(
@@ -181,9 +177,7 @@ class _TestFormState extends State<TestFormState> {
                       }
                       return null;
                     },
-                    onSaved: (String value) {
-                      //model.weight = int.parse(value);
-                    },
+                    onSaved: (String value) {},
                   ),
                 ),
                 Container(
@@ -212,29 +206,7 @@ class _TestFormState extends State<TestFormState> {
                     padding: const EdgeInsets.all(kDefaultPadding),
                     child: TextFormField(
                       controller: noteDatum,
-                      // onTap: () {
-                      //   setState(() {
-                      //     _selectDate(context);
-                      //   });
-                      // },
-                      decoration: InputDecoration(
-                          //suffixIcon: Icon(Icons.arrow_drop_down),
-                          //hintText: formatter.format(selectedDate),
-                          // contentPadding: EdgeInsets.all(10.0),
-                          // border: InputBorder.none,
-                          // filled: true,
-                          // fillColor: Colors.grey[200],
-                          ),
-                      // validator: (String value) {
-                      //   if (value.isEmpty) {
-                      //     return 'Gib den Datum ein';
-                      //   }
-                      //   return null;
-                      // },
-                      //initialValue: "selectedDate.toString()",
-                      // onSaved: (String value) {
-                      //   value = selectedDate.toString();
-                      // },
+                      decoration: InputDecoration(),
                     ),
                   ),
                 ),
@@ -244,7 +216,6 @@ class _TestFormState extends State<TestFormState> {
                     color: kPrimaryColor,
                     onPressed: () async {
                       if (_formKey.currentState.validate()) {
-                        //_formKey.currentState.save();
                         if (isLoadedSemester) {
                           print("entered in update");
                           await updateNote(

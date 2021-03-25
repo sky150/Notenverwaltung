@@ -16,27 +16,6 @@ class SemesterList extends StatelessWidget {
   SemesterList({Key key, this.semester}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    /*_insert() async {
-      // get a reference to the database
-      // because this is an expensive operation we use async and await
-      Database db = await DatabaseHelper.instance.database;
-
-      // row to insert
-      Map<String, dynamic> row = {
-        DatabaseHelper.columnName: 'TestFO',
-        DatabaseHelper.columnGew: '23',
-        DatabaseHelper.columnDurch: 4.5,
-        DatabaseHelper.columnSem: 1,
-      };
-
-      // do the insert and get the id of the inserted row
-      int id = await db.insert(DatabaseHelper.table, row);
-
-      // show the results: print all rows in the db
-      print(await db.query(DatabaseHelper.table));
-    }*/
-
-    // TODO: implement build
     Size size = MediaQuery.of(context).size;
     return ListView.builder(
       itemBuilder: (context, index) {
@@ -80,7 +59,6 @@ class SemesterList extends StatelessWidget {
                     },
                   ),
                   confirmDismiss: (direction) async {
-                    //if (direction == DismissDirection.endToStart) {
                     final bool res = await showDialog(
                         context: context,
                         builder: (BuildContext context) {

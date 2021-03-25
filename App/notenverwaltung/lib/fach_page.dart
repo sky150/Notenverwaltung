@@ -13,13 +13,9 @@ class SemesterList extends StatelessWidget {
   final List<Fach> fach;
 
   SemesterList({Key key, this.fach}) : super(key: key);
-  //List<double> number;
-  //bool isNumber = false;
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     Size size = MediaQuery.of(context).size;
-    //print("Anfang im number" + this.number.toString());
     return ListView.builder(
       itemBuilder: (context, index) {
         return GestureDetector(
@@ -34,34 +30,6 @@ class SemesterList extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                /*FutureBuilder(
-                    future: getNotenschnitt(fach[index].id),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasError) {
-                        print(snapshot.error);
-                      } else if (snapshot.data == null) {
-                        return null;
-                      }
-                      if (index == null) {
-                        return null;
-                      } else {
-                        this.number.add(
-                            double.parse(snapshot.data.toStringAsFixed(2)));
-                      }
-                      for (int i = 0; i < fach.length; i++) {
-                        /*print("Nummer" +
-                            fach[index].id.toString() +
-                            " double: " +
-                            this.number.toString());*/
-                        print("For schleife");
-                        print(this.number[index]);
-                      }
-                      print("WAs in der Variable number steht:" +
-                          this.number.toString());
-                      return snapshot.hasData
-                          ? Container(width: 0.0, height: 0.0)
-                          : null;
-                    }),*/
                 Dismissible(
                     key: Key(fach[index].id.toString()),
                     background: Container(color: Colors.red),
@@ -90,7 +58,6 @@ class SemesterList extends StatelessWidget {
                       },
                     ),
                     confirmDismiss: (direction) async {
-                      //if (direction == DismissDirection.endToStart) {
                       final bool res = await showDialog(
                           context: context,
                           builder: (BuildContext context) {
@@ -152,7 +119,6 @@ class FachScreen extends StatelessWidget {
                         builder: (context) => AddFach(semesterId: semesterId),
                       ));
                 }),
-            //FachScreen(),
             FutureBuilder(
               future: getFaecher(semesterId),
               builder: (context, snapshot) {

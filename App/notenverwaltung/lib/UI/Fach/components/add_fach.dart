@@ -12,22 +12,6 @@ class AddFach extends StatefulWidget {
   final int semesterId;
   AddFach({this.id, this.semesterId}) : super();
 
-  /*@override
-  Widget build(BuildContext context) {
-    /*return Scaffold(
-      appBar: buildAppBar(),
-      body: TestForm(),
-      bottomNavigationBar: MyBottomNavBar(),
-    );*/
-  }*/
-
-  /*AppBar buildAppBar() {
-    return AppBar(
-      title: Text('Neues Fach'),
-      elevation: 0,
-    );
-  }*/
-
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
@@ -47,10 +31,6 @@ class _FormState extends State<AddFach> {
 
   @override
   Widget build(BuildContext context) {
-    // int theId = widget.id;
-    // if (theId == semesterId) {
-    //   theId = 0;
-    // }
     print("Semester id: " + semesterId.toString());
     return Scaffold(
       appBar: buildAppBar(),
@@ -200,98 +180,3 @@ class _DetailFachState extends State<DetailFach> {
     return Form(key: _formKey, child: container);
   }
 }
-
-/*  @override
-  Widget build(BuildContext context) {
-    final halfMediaWidth = MediaQuery.of(context).size.width / 2.0;
-
-    return Form(
-      key: _formKey,
-      child: ListView(
-        children: <Widget>[
-          Container(
-            alignment: Alignment.bottomCenter,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Container(
-                  alignment: Alignment.topCenter,
-                  width: halfMediaWidth * 2,
-                  child: MyTextFormField(
-                    labelText: 'Fach Name',
-                    validator: (String value) {
-                      if (value.isEmpty) {
-                        return 'Gib den Fach Name ein';
-                      }
-                      return null;
-                    },
-                    onSaved: (String value) {
-                      //model.fachName = value;
-                    },
-                  ),
-                ),
-                Container(
-                  alignment: Alignment.topCenter,
-                  width: halfMediaWidth * 2,
-                  child: MyTextFormField(
-                    labelText: 'Gewichtung',
-                    validator: (String value) {
-                      int weight = int.parse(value);
-                      if (weight < 0 || weight > 100 || value.isEmpty) {
-                        return 'Gib eine gültige Gewichtung ein';
-                      }
-                      return null;
-                    },
-                    onSaved: (String value) {
-                      //model.weight = int.parse(value);
-                    },
-                  ),
-                ),
-                Container(
-                  alignment: Alignment.topLeft,
-                  padding: EdgeInsets.all(kDefaultPadding),
-                  width: halfMediaWidth * 2,
-                  child: Text('Optional: ',
-                      style: TextStyle(
-                        fontSize: 18,
-                      )),
-                ),
-                Container(
-                  alignment: Alignment.topCenter,
-                  width: halfMediaWidth * 2,
-                  child: MyTextFormField(
-                    labelText: 'Wunschnote',
-                    onSaved: (String value) {
-                      //model.wishGrade = value;
-                    },
-                  ),
-                ),
-                Container(
-                  alignment: Alignment.bottomCenter,
-                  child: RaisedButton(
-                    color: kPrimaryColor,
-                    onPressed: () {
-                      if (_formKey.currentState.validate()) {
-                        _formKey.currentState.save();
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                //Result(model: this.model))
-                                builder: (context) => null));
-                      }
-                    },
-                    child: Text(
-                      'Speichern',
-                      style: TextStyle(
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }*/

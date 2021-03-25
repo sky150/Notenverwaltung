@@ -13,7 +13,6 @@ class NoteList extends StatelessWidget {
   NoteList({Key key, this.note}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     Size size = MediaQuery.of(context).size;
     return ListView.builder(
       itemBuilder: (context, index) {
