@@ -247,8 +247,13 @@ class _TestFormState extends State<TestFormState> {
                         //_formKey.currentState.save();
                         if (isLoadedSemester) {
                           print("entered in update");
-                          await updateNote(this.note.id, noteNote,
-                              noteGewichtung, noteDatum, noteName);
+                          await updateNote(
+                              this.note.id,
+                              noteNote,
+                              noteGewichtung,
+                              noteDatum,
+                              noteName,
+                              this.note.fachId);
                         } else {
                           print("the id" + this.fachId.toString());
                           await createNote(noteNote, noteGewichtung, noteDatum,

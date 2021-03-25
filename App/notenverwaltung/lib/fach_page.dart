@@ -5,21 +5,21 @@ import 'package:notenverwaltung/components/title_with_more_bbtn.dart';
 import 'package:notenverwaltung/global.dart';
 import 'package:notenverwaltung/note_screen.dart';
 import 'UI/Cards/fach_card.dart';
+import 'database_helper.dart';
 import 'models/fach.dart';
 import 'models/note.dart';
 
 class SemesterList extends StatelessWidget {
   final List<Fach> fach;
 
-  SemesterList({Key key, this.fach, this.isNumber, this.number})
-      : super(key: key);
-  List<double> number;
-  bool isNumber = false;
+  SemesterList({Key key, this.fach}) : super(key: key);
+  //List<double> number;
+  //bool isNumber = false;
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
     Size size = MediaQuery.of(context).size;
-    print("Anfang im number" + this.number.toString());
+    //print("Anfang im number" + this.number.toString());
     return ListView.builder(
       itemBuilder: (context, index) {
         return GestureDetector(
@@ -34,7 +34,7 @@ class SemesterList extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                FutureBuilder(
+                /*FutureBuilder(
                     future: getNotenschnitt(fach[index].id),
                     builder: (context, snapshot) {
                       if (snapshot.hasError) {
@@ -61,14 +61,14 @@ class SemesterList extends StatelessWidget {
                       return snapshot.hasData
                           ? Container(width: 0.0, height: 0.0)
                           : null;
-                    }),
+                    }),*/
                 Dismissible(
                     key: Key(fach[index].id.toString()),
                     background: Container(color: Colors.red),
                     child: FachCard(
                       fachName: fach[index].name,
                       weight: fach[index].gewichtung,
-                      fachAvg: this.number[index],
+                      fachAvg: fach[index].durchschnitt,
                       press: () {
                         Navigator.push(
                           context,
@@ -166,8 +166,7 @@ class FachScreen extends StatelessWidget {
                   );
                 }
                 return snapshot.hasData
-                    ? SemesterList(
-                        fach: snapshot.data, number: [5.25], isNumber: false)
+                    ? SemesterList(fach: snapshot.data)
                     : Center(child: CircularProgressIndicator());
               },
             ),
@@ -202,22 +201,6 @@ class FachScreen extends StatelessWidget {
                       )
                     : Center(child: CircularProgressIndicator());
               },
-            ),
-
-            Center(
-              child: Column(
-                children: [
-                  Text(" ", textAlign: TextAlign.center),
-                  Text(
-                    'Notenschnitt: 4.45',
-                    textAlign: TextAlign.center,
-                  ),
-                  Text(
-                    'Pluspunkte: -0.5',
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
             ),
           ],
         ),

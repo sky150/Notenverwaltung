@@ -2,6 +2,7 @@ import 'package:http/http.dart' as http;
 import 'package:notenverwaltung/global.dart';
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
+import 'package:notenverwaltung/database_helper.dart';
 
 class Fach {
   int id;
@@ -52,19 +53,19 @@ Future<dynamic> getNotenschnittFach(int semesterId) async {
 }
 
 double createDurchschnittList(List data) {
-  if (data.isEmpty) {
-    return 0.0;
-  }
   double summeN = 0;
   double summeG = 0;
   double summeNG = 0;
 
   for (int i = 0; i < data.length; i++) {
-    summeG = summeG + double.parse(data[i]["fach_gewichtung"]) / 100;
-    summeN = summeN + data[i]["fach_durchschnitt"];
-    summeNG = summeNG +
-        (data[i]["fach_durchschnitt"] *
-            (double.parse(data[i]["fach_gewichtung"]) / 100));
+    if (data[i]["fach_durchschnitt"] != null &&
+        data[i]["fach_gewichtung"] != null) {
+      summeN = summeN + data[i]["fach_durchschnitt"];
+      summeG = summeG + double.parse(data[i]["fach_gewichtung"]) / 100;
+      summeNG = summeNG +
+          (data[i]["fach_durchschnitt"] *
+              (double.parse(data[i]["fach_gewichtung"]) / 100));
+    }
   }
   // (note*gewichtung)/summeG
   double schnitt = summeNG / summeG;
@@ -85,6 +86,8 @@ Future<List<Fach>> getFaecher(int semesterId) async {
       print(fachList[i].gewichtung);
       print(fachList[i].semesterId);
     }
+    double notenschnitt = await getNotenschnittFach(semesterId);
+    DatabaseHelper.instance.updateSemesterSchnitt(notenschnitt, semesterId);
 
     return fachList;
   } else {
@@ -137,7 +140,7 @@ Future<Fach> getFachById(int id) async {
 }
 
 Future updateFach(int fachId, double durchschnitt, TextEditingController name,
-    gewichtung) async {
+    gewichtung, int semesterId) async {
   final response = await http.put('$URL_FAECHER/$fachId',
       headers: URL_HEADERS,
       body: json.encode({
@@ -170,9 +173,13 @@ Future createFach(
   print("somethin happend in create");
   print(name.text + "  " + gewichtung.text + "  " + semesterId.toString());
   if (response.statusCode == 200) {
+    double notenschnitt = await getNotenschnittFach(semesterId);
+    DatabaseHelper.instance.updateSemesterSchnitt(notenschnitt, semesterId);
     print(response.body.toString());
     return response;
   } else {
+    double notenschnitt = await getNotenschnittFach(semesterId);
+    DatabaseHelper.instance.updateSemesterSchnitt(notenschnitt, semesterId);
     print(response.statusCode);
     print(response.body);
   }

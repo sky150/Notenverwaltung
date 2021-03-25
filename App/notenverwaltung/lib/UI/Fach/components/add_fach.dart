@@ -159,8 +159,8 @@ class _DetailFachState extends State<DetailFach> {
         if (_formKey.currentState.validate()) {
           if (isLoadedSemester) {
             print("entered in update");
-            await updateFach(
-                this.fach.id, this.fach.durchschnitt, fachName, fachGewichtung);
+            await updateFach(this.fach.id, this.fach.durchschnitt, fachName,
+                fachGewichtung, this.fach.semesterId);
           } else {
             print("the id" + this.semesterId.toString());
             await createFach(fachName, fachGewichtung, this.semesterId);

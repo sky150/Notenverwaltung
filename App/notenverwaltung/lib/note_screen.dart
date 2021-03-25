@@ -62,7 +62,9 @@ class NoteList extends StatelessWidget {
                                 FlatButton(
                                   onPressed: () {
                                     Navigator.of(context).pop(true);
-                                    if ('DONE' == deleteNote(note[index].id)) {
+                                    if ('DONE' ==
+                                        deleteNote(note[index].id,
+                                            note[index].fachId)) {
                                       note.removeAt(index);
                                     }
                                   },

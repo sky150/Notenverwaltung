@@ -3,16 +3,11 @@ import 'package:path/path.dart' show join;
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart'
     show getApplicationDocumentsDirectory;
+import 'package:postgres/postgres.dart';
 
 class DatabaseHelper {
-  static final _databaseName = "MyDatabase.db";
+  static final _databaseName = "notenverwaltung.db";
   static final _databaseVersion = 1;
-
-  static final table = 'my_table';
-
-  static final columnId = '_id';
-  static final columnName = 'name';
-  static final columnAge = 'age';
 
   // make this a singleton class
   DatabaseHelper._privateConstructor();
@@ -31,18 +26,32 @@ class DatabaseHelper {
   _initDatabase() async {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, _databaseName);
-    return await openDatabase(path,
-        version: _databaseVersion, onCreate: _onCreate);
+    return await openDatabase(path, version: _databaseVersion);
   }
 
-  // SQL code to create the database table
-  Future _onCreate(Database db, int version) async {
-    await db.execute('''
-          CREATE TABLE $table (
-            $columnId INTEGER PRIMARY KEY,
-            $columnName TEXT NOT NULL,
-            $columnAge INTEGER NOT NULL
-          )
-          ''');
+  updateFachSchnitt(double nr, int id) async {
+    var connection = PostgreSQLConnection("10.0.2.2", 5433, "notenverwaltung",
+        username: "nv_user", password: "1234");
+    await connection.open();
+    await connection.query('UPDATE _fach SET fach_durchschnitt = ' +
+        nr.toStringAsFixed(2) +
+        ' where fach_id = ' +
+        id.toString() +
+        ';');
+    await connection.close();
+    // Get a reference to the database.
+  }
+
+  updateSemesterSchnitt(double nr, int id) async {
+    var connection = PostgreSQLConnection("10.0.2.2", 5433, "notenverwaltung",
+        username: "nv_user", password: "1234");
+    await connection.open();
+    await connection.query('UPDATE _semester SET semester_durchschnitt = ' +
+        nr.toStringAsFixed(2) +
+        'where semester_id = ' +
+        id.toString() +
+        ';');
+    await connection.close();
+    // Get a reference to the database.
   }
 }

@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
+import 'package:notenverwaltung/database_helper.dart';
 import 'package:notenverwaltung/global.dart';
 import 'dart:convert';
 import 'package:intl/intl.dart';
+import 'package:postgres/postgres.dart';
 
 class Note {
   int id;
@@ -55,6 +57,12 @@ Future<List<Note>> getNoten(int fachId) async {
       print(noteList[i].name);
       print(noteList[i].fachId);
     }
+    double notenschnitt = await getNotenschnitt(fachId);
+    if (notenschnitt == 0.0) {
+      notenschnitt = 0.00;
+    } else {
+      DatabaseHelper.instance.updateFachSchnitt(notenschnitt, fachId);
+    }
 
     return noteList;
   } else {
@@ -68,8 +76,6 @@ Future<dynamic> getNotenschnitt(int fachId) async {
   if (response.statusCode == 200) {
     List responseJson = json.decode(response.body.toString());
     double noteList = createDurchschnittList(responseJson);
-    print(noteList);
-
     return noteList;
   } else {
     throw Exception('Failed to load note');
@@ -121,11 +127,13 @@ List<Note> createNoteList(List data) {
   return list;
 }
 
-Future deleteNote(int id) async {
+Future deleteNote(int id, int fachId) async {
   String status = '';
   final url = '$URL_NOTEN/$id';
   final response = await http.delete(url, headers: URL_HEADERS);
   if (response.statusCode == 200) {
+    double notenschnitt = await getNotenschnitt(fachId);
+    DatabaseHelper.instance.updateFachSchnitt(notenschnitt, fachId);
     print('Note deleted with this id: $id');
     status = 'DONE';
   } else {
@@ -145,8 +153,8 @@ Future<Note> getNoteById(int id) async {
   }
 }
 
-Future updateNote(
-    int noteId, TextEditingController note, gewichtung, datum, name) async {
+Future updateNote(int noteId, TextEditingController note, gewichtung, datum,
+    name, int fachId) async {
   double newNote = double.parse(note.text);
   final response = await http.put('$URL_NOTEN/$noteId',
       headers: URL_HEADERS,
@@ -158,11 +166,21 @@ Future updateNote(
       }));
   print("id: $noteId name: ${name.text}");
   if (response.statusCode == 200) {
+    double notenschnitt = await getNotenschnitt(fachId);
+    DatabaseHelper.instance.updateFachSchnitt(notenschnitt, fachId);
     print(response.statusCode);
     return response;
   } else {
+    print('fachId vor notenschnitt' + fachId.toString());
+    double notenschnitt = await getNotenschnitt(fachId);
+    print('Fehler ' +
+        fachId.toString() +
+        ' notenschnitt' +
+        notenschnitt.toString());
+    DatabaseHelper.instance.updateFachSchnitt(notenschnitt, fachId);
     print(response.statusCode);
     print(response.body);
+    return response;
     //throw Exception('Failes to update a Task. Error${response.toString()}');
   }
 }
@@ -187,8 +205,12 @@ Future createNote(
   print("somethin happend in create NOTE");
   if (response.statusCode == 200) {
     print(response.body.toString());
+    double notenschnitt = await getNotenschnitt(fachId);
+    DatabaseHelper.instance.updateFachSchnitt(notenschnitt, fachId);
     return response;
   } else {
+    double notenschnitt = await getNotenschnitt(fachId);
+    DatabaseHelper.instance.updateFachSchnitt(notenschnitt, fachId);
     print(response.statusCode);
     print(response.body.toString());
   }

@@ -4,12 +4,38 @@ import 'package:notenverwaltung/UI/home/components/add_semester.dart';
 import 'package:notenverwaltung/global.dart';
 import 'UI/Cards/semester_card.dart';
 import 'models/semester.dart';
+import 'database_helper.dart';
+import 'dart:io' show Directory;
+import 'package:path/path.dart' show join;
+import 'package:sqflite/sqflite.dart';
+import 'package:path_provider/path_provider.dart'
+    show getApplicationDocumentsDirectory;
 
 class SemesterList extends StatelessWidget {
   final List<Semester> semester;
   SemesterList({Key key, this.semester}) : super(key: key);
   @override
   Widget build(BuildContext context) {
+    /*_insert() async {
+      // get a reference to the database
+      // because this is an expensive operation we use async and await
+      Database db = await DatabaseHelper.instance.database;
+
+      // row to insert
+      Map<String, dynamic> row = {
+        DatabaseHelper.columnName: 'TestFO',
+        DatabaseHelper.columnGew: '23',
+        DatabaseHelper.columnDurch: 4.5,
+        DatabaseHelper.columnSem: 1,
+      };
+
+      // do the insert and get the id of the inserted row
+      int id = await db.insert(DatabaseHelper.table, row);
+
+      // show the results: print all rows in the db
+      print(await db.query(DatabaseHelper.table));
+    }*/
+
     // TODO: implement build
     Size size = MediaQuery.of(context).size;
     return ListView.builder(
