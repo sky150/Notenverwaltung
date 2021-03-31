@@ -73,8 +73,17 @@ class SemesterList extends StatelessWidget {
                                 FlatButton(
                                   onPressed: () {
                                     Navigator.of(context).pop(true);
-                                    if ('DONE' == deleteFach(fach[index].id)) {
+                                    if ('DONE' ==
+                                        deleteFach(fach[index].id,
+                                            fach[index].semesterId)) {
                                       fach.removeAt(index);
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => FachScreen(
+                                                    semesterId:
+                                                        fach[index].semesterId,
+                                                  )));
                                     }
                                   },
                                   child: const Text("LÖSCHEN"),

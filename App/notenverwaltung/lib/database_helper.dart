@@ -29,10 +29,30 @@ class DatabaseHelper {
     return await openDatabase(path, version: _databaseVersion);
   }
 
+  insertFach(String name, String gewichtung, semesterId) async {
+    var connection = PostgreSQLConnection("10.0.2.2", 5433, "notenverwaltung",
+        username: "nv_user", password: "1234");
+    await connection.open();
+    await connection.query(
+        'INSERT INTO _fach (fach_name,fach_gewichtung,fach_durchschnitt,semester_id) VALUES ("' +
+            name +
+            '","' +
+            gewichtung +
+            '');
+    await connection.close();
+    // Get a reference to the database.
+  }
+
   updateFachSchnitt(double nr, int id) async {
     var connection = PostgreSQLConnection("10.0.2.2", 5433, "notenverwaltung",
         username: "nv_user", password: "1234");
     await connection.open();
+    if (nr == 0.0) {
+      await connection.query(
+          'UPDATE _fach SET fach_durchschnitt = \'\' where fach_id = ' +
+              id.toString() +
+              ';');
+    }
     await connection.query('UPDATE _fach SET fach_durchschnitt = ' +
         nr.toStringAsFixed(2) +
         ' where fach_id = ' +
@@ -42,10 +62,32 @@ class DatabaseHelper {
     // Get a reference to the database.
   }
 
+  Future<dynamic> selectWunschNote(int id) async {
+    var connection = PostgreSQLConnection("10.0.2.2", 5433, "notenverwaltung",
+        username: "nv_user", password: "1234");
+    await connection.open();
+    var wunschnote = await connection.query(
+        'SELECT fach_wunschnote from _fach where fach_id = ' +
+            id.toString() +
+            ';');
+    print("bro what is going on " + wunschnote.toString());
+    print(wunschnote[0][0]);
+    await connection.close();
+    return wunschnote[0][0];
+
+    // Get a reference to the database.
+  }
+
   updateSemesterSchnitt(double nr, int id) async {
     var connection = PostgreSQLConnection("10.0.2.2", 5433, "notenverwaltung",
         username: "nv_user", password: "1234");
     await connection.open();
+    if (nr == 0.0) {
+      await connection.query(
+          'UPDATE _semester SET semester_durchschnitt = \'\' where semester_id = ' +
+              id.toString() +
+              ';');
+    }
     await connection.query('UPDATE _semester SET semester_durchschnitt = ' +
         nr.toStringAsFixed(2) +
         'where semester_id = ' +

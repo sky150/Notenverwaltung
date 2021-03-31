@@ -1,0 +1,22 @@
+CREATE TABLE _semester (
+	semester_id bigint PRIMARY KEY,
+	semester_name VARCHAR NOT NULL,
+	semester_jahr VARCHAR  ,
+	semester_durchschnitt double precision,
+	semester_notiz VARCHAR 
+);
+CREATE TABLE _fach (
+	fach_id bigint PRIMARY KEY,
+	fach_name VARCHAR (45) NOT NULL,
+	fach_gewichtung VARCHAR (3) ,
+	fach_durchschnitt double precision,
+	semester_id integer 
+);
+CREATE TABLE _noten (
+	note_id bigint PRIMARY KEY NOT NULL,
+	note double precision NOT NULL,
+	note_gewichtung VARCHAR ,
+	note_datum VARCHAR,
+	note_name VARCHAR,
+	fach_id integer 
+);

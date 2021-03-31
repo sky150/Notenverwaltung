@@ -58,11 +58,10 @@ Future<List<Note>> getNoten(int fachId) async {
       print(noteList[i].fachId);
     }
     double notenschnitt = await getNotenschnitt(fachId);
-    if (notenschnitt == 0.0) {
+    if (notenschnitt == 0.0 || notenschnitt.isNaN) {
       notenschnitt = 0.00;
-    } else {
-      DatabaseHelper.instance.updateFachSchnitt(notenschnitt, fachId);
     }
+    DatabaseHelper.instance.updateFachSchnitt(notenschnitt, fachId);
 
     return noteList;
   } else {
@@ -82,6 +81,14 @@ Future<dynamic> getNotenschnitt(int fachId) async {
   }
 }
 
+Future<dynamic> getWunschNote(int fachId) async {
+  var wunsch = await DatabaseHelper.instance.selectWunschNote(fachId);
+  print("Thats the final note" + wunsch.toString());
+  double wunschNote = double.parse(wunsch.toString());
+  print("Thats the final note" + wunschNote.toString());
+  return wunschNote;
+}
+
 double createDurchschnittList(List data) {
   if (data.isEmpty) {
     return 0.0;
@@ -98,6 +105,9 @@ double createDurchschnittList(List data) {
   }
   // (note*gewichtung)/summeG
   double schnitt = summeNG / summeG;
+  if (schnitt.isNaN) {
+    schnitt = 0.0;
+  }
   return schnitt;
 }
 
@@ -213,5 +223,6 @@ Future createNote(
     DatabaseHelper.instance.updateFachSchnitt(notenschnitt, fachId);
     print(response.statusCode);
     print(response.body.toString());
+    return response;
   }
 }

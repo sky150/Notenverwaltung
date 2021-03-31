@@ -148,14 +148,37 @@ class NoteScreen extends StatelessWidget {
                                   snapshot.data.toStringAsFixed(2),
                               textAlign: TextAlign.center,
                             ),
+                          ],
+                        ),
+                      )
+                    : Center();
+              },
+            ),
+            FutureBuilder(
+              future: getWunschNote(fachId),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  print(snapshot.error);
+                } else if (snapshot.data == null) {
+                  return Container(
+                    child: Container(
+                      child: Text(""),
+                    ),
+                  );
+                }
+                return snapshot.hasData
+                    ? Center(
+                        child: Column(
+                          children: [
+                            Text(" ", textAlign: TextAlign.center),
                             Text(
-                              'Wunschnote: 5.55',
+                              'Wunschnote: ' + snapshot.data.toString(),
                               textAlign: TextAlign.center,
                             ),
                           ],
                         ),
                       )
-                    : Center(child: CircularProgressIndicator());
+                    : Center();
               },
             ),
           ],

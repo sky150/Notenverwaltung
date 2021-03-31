@@ -49,7 +49,10 @@ class TestForm extends State<AddNote> {
 
   AppBar buildAppBar() {
     return AppBar(
-      title: Text('Neue Note'),
+      title: Center(
+        child: Text('Neue Note'),
+      ),
+      //automaticallyImplyLeading: false,
       elevation: 0,
     );
   }
@@ -117,6 +120,9 @@ class _TestFormState extends State<TestFormState> {
     print("ForeignKey fach id: " + this.fachId.toString());
 
     String noteValue = this.note.note.toString();
+    if (noteValue == 'null') {
+      noteValue = '';
+    }
     TextEditingController noteNote = TextEditingController(text: noteValue);
     TextEditingController noteGewichtung;
     if (this.note.datum != null) {
@@ -225,21 +231,30 @@ class _TestFormState extends State<TestFormState> {
                               noteDatum,
                               noteName,
                               this.note.fachId);
+                          Timer(Duration(seconds: 1), () {
+                            Navigator.pop(context);
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    //Result(model: this.model))
+                                    builder: (context) =>
+                                        NoteScreen(fachId: this.note.fachId)));
+                          });
                         } else {
                           print("the id" + this.fachId.toString());
                           await createNote(noteNote, noteGewichtung, noteDatum,
                               noteName, this.fachId);
                           print("entered in create note");
+                          Timer(Duration(seconds: 1), () {
+                            Navigator.pop(context);
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    //Result(model: this.model))
+                                    builder: (context) =>
+                                        NoteScreen(fachId: this.fachId)));
+                          });
                         }
-                        Timer(Duration(seconds: 1), () {
-                          Navigator.pop(context);
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  //Result(model: this.model))
-                                  builder: (context) =>
-                                      NoteScreen(fachId: this.note.fachId)));
-                        });
                       }
                     },
                     child: Text(

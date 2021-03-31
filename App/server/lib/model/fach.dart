@@ -16,5 +16,8 @@ class _Fach {
   double fach_durchschnitt;
 
   @Column(unique: false)
+  double fach_wunschnote;
+
+  @Column(unique: false)
   int semester_id;
 }

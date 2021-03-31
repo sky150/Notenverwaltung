@@ -143,6 +143,7 @@ Future updateSemester(int semesterId, double durchschnitt,
 }
 
 Future createSemester(TextEditingController name, jahr, notiz) async {
+  print("Semester eingaben: " + name.text + " " + jahr.text + " " + notiz.text);
   final response = await http.post(URL_SEMESTER,
       headers: URL_HEADERS,
       body: json.encode({

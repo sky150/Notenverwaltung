@@ -92,10 +92,16 @@ class _DetailFachState extends State<DetailFach> {
       });
     }
 
+    String wunschNoteValue = this.fach.wunschNote.toString();
+    if (wunschNoteValue == 'null') {
+      wunschNoteValue = '';
+    }
     TextEditingController fachName =
         TextEditingController(text: this.fach.name);
     TextEditingController fachGewichtung =
         TextEditingController(text: this.fach.gewichtung);
+    TextEditingController fachWunschNote =
+        TextEditingController(text: wunschNoteValue);
 
     final MyTextFormField txtName = MyTextFormField(
       controller: fachName,
@@ -133,29 +139,58 @@ class _DetailFachState extends State<DetailFach> {
         print(text);
       },
     );
+    final MyTextFormField txtWunschNote = MyTextFormField(
+      controller: fachWunschNote,
+      labelText: 'Wunschnote',
+      validator: (String value) {
+        if (value.isEmpty) {
+          return 'Gib die Gewichtung ein';
+        }
+        return null;
+      },
+      textAlign: TextAlign.left,
+      autocorrect: false,
+    );
     final btnSave = RaisedButton(
       color: kPrimaryColor,
       onPressed: () async {
         if (_formKey.currentState.validate()) {
           if (isLoadedSemester) {
             print("entered in update");
-            await updateFach(this.fach.id, this.fach.durchschnitt, fachName,
-                fachGewichtung, this.fach.semesterId);
-          } else {
-            print("the id" + this.semesterId.toString());
-            await createFach(fachName, fachGewichtung, this.semesterId);
-            print("entered in create fach");
+            await updateFach(
+                this.fach.id,
+                this.fach.durchschnitt,
+                this.fach.wunschNote,
+                fachName,
+                fachGewichtung,
+                this.fach.semesterId);
+
+            Timer(Duration(seconds: 1), () {
+              Navigator.pop(context);
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      FachScreen(semesterId: this.fach.semesterId),
+                ),
+              );
+            });
           }
-          Timer(Duration(seconds: 1), () {
-            Navigator.pop(context);
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) =>
-                    FachScreen(semesterId: this.fach.semesterId),
-              ),
-            );
-          });
+          if (!isLoadedSemester) {
+            print("the id" + this.semesterId.toString());
+            await createFach(
+                fachName, fachGewichtung, fachWunschNote, this.semesterId);
+            print("entered in create fach");
+            Timer(Duration(seconds: 1), () {
+              Navigator.pop(context);
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => FachScreen(semesterId: this.semesterId),
+                ),
+              );
+            });
+          }
         }
       },
       child: Text(
@@ -174,6 +209,7 @@ class _DetailFachState extends State<DetailFach> {
           children: <Widget>[
             Container(alignment: Alignment.topCenter, child: txtName),
             Container(alignment: Alignment.topCenter, child: txtGewichtung),
+            Container(alignment: Alignment.topCenter, child: txtWunschNote),
             Container(alignment: Alignment.topCenter, child: btnSave)
           ],
         ));
