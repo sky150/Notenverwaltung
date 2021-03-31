@@ -13,3 +13,7 @@ Activate environment Python:
 5. deactivate
 
 Start aqueduct server: aqueduct serve
+
+deploy:
+https://www.youtube.com/watch?v=QWEkL_RUeCQ
+https://www.youtube.com/watch?v=NFTaWkUtD34
