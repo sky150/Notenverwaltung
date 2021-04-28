@@ -1,6 +1,9 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:notenverwaltung/UI/TextFields/MyTextFormField.dart';
-import 'package:notenverwaltung/models/semester.dart';
+import 'package:notenverwaltung/database.dart';
+import 'package:notenverwaltung/semester.dart';
+//import 'package:notenverwaltung/models/semester.dart';
 import 'package:notenverwaltung/semester_screen.dart';
 import 'package:notenverwaltung/UI/home/home_screen.dart';
 import 'package:notenverwaltung/components/my_bottom_nav_bar.dart';
@@ -10,89 +13,39 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class AddSemester extends StatefulWidget {
-  final int id;
-  AddSemester({this.id}) : super();
+  final Semester semester;
+  AddSemester({this.semester}) : super();
 
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
-    return _TestFormState();
+    return _TestFormState(semester);
   }
 }
 
 class _TestFormState extends State<AddSemester> {
-  Semester semester = new Semester();
-  bool isLoadedSemester = false;
-
-  AddSemester model;
-  var name = TextEditingController();
-  var jahr = TextEditingController();
-  var notiz = TextEditingController();
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: buildAppBar(),
-      body: FutureBuilder(
-        future: getSemesterById(widget.id),
-        builder: (context, snapshot) {
-          if (snapshot.hasError) print(snapshot.error);
-          if (snapshot.hasData) {
-            return DetailSemester(semester: snapshot.data);
-          } else {
-            return Center(child: CircularProgressIndicator());
-          }
-        },
-      ),
-      bottomNavigationBar: MyBottomNavBar(),
-    );
-  }
-
-  AppBar buildAppBar() {
-    return AppBar(
-      title: Text('Neues Semester'),
-      elevation: 0,
-    );
-  }
-}
-
-class DetailSemester extends StatefulWidget {
   final Semester semester;
-  DetailSemester({Key key, this.semester}) : super(key: key);
-
-  @override
-  State<StatefulWidget> createState() {
-    // TODO: implement createState
-    return _DetailSemesterState();
-  }
-}
-
-class _DetailSemesterState extends State<DetailSemester> {
-  Semester semester = new Semester();
   bool isLoadedSemester = false;
   final _formKey = GlobalKey<FormState>();
+
+  _TestFormState(this.semester);
 
   @override
   Widget build(BuildContext context) {
     final halfMediaWidth = MediaQuery.of(context).size.width / 2.0;
-    // TODO: implement build
-    if (widget.semester.id == null) {
-      setState(() {
-        this.isLoadedSemester = false;
-      });
-    } else {
-      setState(() {
-        this.semester = Semester.fromFach(widget.semester);
-        this.isLoadedSemester = true;
-      });
-    }
+    TextEditingController semesterName;
+    TextEditingController semesterJahr;
+    TextEditingController semesterNotiz;
 
-    TextEditingController semesterName =
-        TextEditingController(text: this.semester.name);
-    TextEditingController semesterJahr =
-        TextEditingController(text: this.semester.jahr);
-    TextEditingController semesterNotiz =
-        TextEditingController(text: this.semester.notiz);
+    semesterName = TextEditingController();
+    semesterJahr = TextEditingController();
+    semesterNotiz = TextEditingController();
+    if (semester != null) {
+      semesterName = TextEditingController(text: this.semester.name);
+      semesterJahr = TextEditingController(text: this.semester.jahr);
+      semesterNotiz = TextEditingController(text: this.semester.notiz);
+      isLoadedSemester = true;
+    }
 
     final MyTextFormField txtName = MyTextFormField(
       controller: semesterName,
@@ -141,13 +94,22 @@ class _DetailSemesterState extends State<DetailSemester> {
       color: kPrimaryColor,
       onPressed: () async {
         if (_formKey.currentState.validate()) {
+          var semester;
           if (isLoadedSemester) {
             print("entered in update");
-            await updateSemester(this.semester.id, this.semester.durchschnitt,
-                semesterName, semesterJahr, semesterNotiz);
+            semester = new Semester(
+                semesterName.text,
+                this.semester.durchschnitt,
+                semesterJahr.text,
+                semesterNotiz.text);
+            semester.setId(this.semester.id);
+            print(semester);
+            updateS(semester, this.semester.id);
+            //semester.update();
           } else {
-            await createSemester(semesterName, semesterJahr, semesterNotiz);
-            print("entered in create semester");
+            semester = new Semester(
+                semesterName.text, null, semesterJahr.text, semesterNotiz.text);
+            semester.setId(saveSemester(semester));
           }
           Timer(Duration(seconds: 1), () {
             Navigator.pop(context);
@@ -180,6 +142,42 @@ class _DetailSemesterState extends State<DetailSemester> {
             Container(alignment: Alignment.topCenter, child: btnSave)
           ],
         ));
-    return Form(key: _formKey, child: container);
+
+    return Scaffold(
+      appBar: buildAppBar(),
+      body: Form(key: _formKey, child: container),
+      bottomNavigationBar: MyBottomNavBar(),
+    );
+  }
+
+  AppBar buildAppBar() {
+    return AppBar(
+      title: Text('Neues Semester'),
+      elevation: 0,
+    );
   }
 }
+
+/*class _DetailSemesterState extends State<DetailSemester> {
+  //Semester semester;
+  bool isLoadedSemester = false;
+  final _formKey = GlobalKey<FormState>();
+
+  @override
+  Widget build(BuildContext context) {
+    final halfMediaWidth = MediaQuery.of(context).size.width / 2.0;
+    // TODO: implement build
+    /*if (widget.semester.id == null) {
+      setState(() {
+        this.isLoadedSemester = false;
+      });
+    } else {
+      setState(() {
+        this.semester = Semester.fromFach(widget.semester);
+        this.isLoadedSemester = true;
+      });
+    }*/
+
+    return Form(key: _formKey, child: container);
+  }
+}*/

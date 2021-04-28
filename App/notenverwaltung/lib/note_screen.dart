@@ -1,7 +1,9 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:notenverwaltung/components/my_bottom_nav_bar.dart';
 import 'package:notenverwaltung/UI/Note/components/add_note.dart';
 import 'package:notenverwaltung/components/title_with_more_bbtn.dart';
+import 'package:notenverwaltung/models/fach.dart';
 import 'package:notenverwaltung/models/note.dart';
 import 'models/note.dart';
 import 'package:notenverwaltung/global.dart';
@@ -35,17 +37,21 @@ class NoteList extends StatelessWidget {
                       noteName: note[index].name,
                       note: note[index].note,
                       press: () {
-                        int selectedId = note[index].id;
+                        //int selectedId = note[index].id;
+                        DatabaseReference id;
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => AddNote(id: selectedId),
+                            builder: (context) =>
+                                Container(), //AddNote(id: id),
                           ),
                         );
                       },
                     ),
                     confirmDismiss: (direction) async {
                       //if (direction == DismissDirection.endToStart) {
+                      Fach object = new Fach();
+                      object.id = this.note[index].fachId;
                       final bool res = await showDialog(
                           context: context,
                           builder: (BuildContext context) {
@@ -62,8 +68,10 @@ class NoteList extends StatelessWidget {
                                   onPressed: () {
                                     Navigator.of(context).pop(true);
                                     if ('DONE' ==
-                                        deleteNote(note[index].id,
-                                            note[index].fachId)) {
+                                        deleteNote(
+                                            note[index].id,
+                                            note[index].fachId,
+                                            object.semesterId)) {
                                       note.removeAt(index);
                                     }
                                   },
@@ -91,8 +99,10 @@ class NoteScreen extends StatelessWidget {
   final int fachId;
   NoteScreen({this.fachId}) : super();
 
+  Fach object = new Fach();
   @override
   Widget build(BuildContext context) {
+    object.id = 3;
     return Scaffold(
       appBar: buildAppBar(),
       body: SingleChildScrollView(
@@ -106,11 +116,12 @@ class NoteScreen extends StatelessWidget {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => AddNote(fachId: fachId),
+                        builder: (context) =>
+                            Container(), //AddNote(fachId: fachId),
                       ));
                 }),
             FutureBuilder(
-              future: getNoten(fachId),
+              future: getNoten(3),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
                   print(snapshot.error);
@@ -127,7 +138,7 @@ class NoteScreen extends StatelessWidget {
               },
             ),
             FutureBuilder(
-              future: getNotenschnitt(fachId),
+              future: getNotenschnitt(3),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
                   print(snapshot.error);
@@ -155,7 +166,7 @@ class NoteScreen extends StatelessWidget {
               },
             ),
             FutureBuilder(
-              future: getWunschNote(fachId),
+              future: getWunschNote(3),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
                   print(snapshot.error);

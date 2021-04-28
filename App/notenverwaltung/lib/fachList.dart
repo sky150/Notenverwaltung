@@ -1,25 +1,41 @@
-import 'package:flutter/material.dart';
-import 'package:notenverwaltung/authentication_service.dart';
-import 'package:notenverwaltung/fach_page.dart';
-import 'package:notenverwaltung/UI/home/components/add_semester.dart';
-import 'package:notenverwaltung/global.dart';
-import 'UI/Cards/semester_card.dart';
-import 'models/semester.dart';
-import 'database_helper.dart';
-import 'dart:io' show Directory;
-import 'package:path/path.dart' show join;
-import 'package:sqflite/sqflite.dart';
-import 'package:path_provider/path_provider.dart'
-    show getApplicationDocumentsDirectory;
+import 'package:firebase_database/firebase_database.dart';
+import 'package:notenverwaltung/database.dart';
+import 'package:notenverwaltung/note_page.dart';
 
-class SemesterList extends StatelessWidget {
-  final List<Semester> semester;
-  SemesterList({Key key, this.semester}) : super(key: key);
+import 'UI/Cards/fach_card.dart';
+import 'UI/Fach/components/add_fach.dart';
+import 'fach.dart';
+import 'package:flutter/material.dart';
+
+import 'global.dart';
+
+class FachList extends StatefulWidget {
+  final List<Fach> listItems;
+
+  FachList(this.listItems);
+
+  @override
+  _ListState createState() => _ListState();
+}
+
+class _ListState extends State<FachList> {
+  void like(Function callBack) {
+    this.setState(() {
+      callBack();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return ListView.builder(
       itemBuilder: (context, index) {
+        var fach = this.widget.listItems[index];
+        @override
+        void initState() {
+          super.initState();
+        }
+
         return GestureDetector(
             child: Container(
           margin: EdgeInsets.only(
@@ -33,29 +49,30 @@ class SemesterList extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Dismissible(
-                  key: Key(semester[index].id.toString()),
+                  key: Key(fach.id.key),
                   background: Container(color: Colors.red),
-                  child: SemesterCard(
-                    semesterName: semester[index].name,
-                    year: semester[index].jahr,
-                    semesterAvg: semester[index].durchschnitt,
+                  child: FachCard(
+                    fachName: fach.name,
+                    weight: fach.gewichtung.toString(),
+                    fachAvg: fach.durchschnitt != null
+                        ? double.parse(fach.durchschnitt.toStringAsPrecision(2))
+                        : null,
                     press: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           //DetailsScreen()
-                          builder: (context) =>
-                              FachScreen(semesterId: semester[index].id),
+                          builder: (context) => NoteTest(fachId: fach.id),
                         ),
                       );
                     },
                     longPress: () {
-                      int selectedId = semester[index].id;
+                      DatabaseReference selectedId = fach.id;
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) =>
-                              Container(), //AddSemester(id: selectedId),
+                              AddFach(fach: fach, semesterId: selectedId),
                         ),
                       );
                     },
@@ -65,9 +82,9 @@ class SemesterList extends StatelessWidget {
                         context: context,
                         builder: (BuildContext context) {
                           return AlertDialog(
-                            title: new Text("${semester[index].name}"),
+                            title: new Text("${fach.name}"),
                             content: Text(
-                                "Wollen sie ${semester[index].name} wirklich löschen?"),
+                                "Wollen sie ${fach.name} wirklich löschen?"),
                             actions: <Widget>[
                               FlatButton(
                                   onPressed: () => Navigator.of(context).pop(),
@@ -75,10 +92,7 @@ class SemesterList extends StatelessWidget {
                               FlatButton(
                                 onPressed: () {
                                   Navigator.of(context).pop(true);
-                                  if ('DONE' ==
-                                      deleteSemester(semester[index].id)) {
-                                    semester.removeAt(index);
-                                  }
+                                  deleteFach(fach.id);
                                 },
                                 child: const Text("LÖSCHEN"),
                               ),
@@ -91,40 +105,10 @@ class SemesterList extends StatelessWidget {
           ),
         ));
       },
-      itemCount: semester.length,
+      itemCount: this.widget.listItems.length,
       scrollDirection: Axis.vertical,
       physics: NeverScrollableScrollPhysics(),
       shrinkWrap: true,
-    );
-  }
-}
-
-enum HttpRequestStatus { NOT_DONE, DONE, ERROR }
-
-class SemesterScreen extends StatelessWidget {
-  const SemesterScreen({
-    Key key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
-    return FutureBuilder(
-      future: getSemester(),
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          print(snapshot.error);
-        } else if (snapshot.data == null) {
-          return Container(
-            child: Container(
-              child: Text("Loading..."),
-            ),
-          );
-        }
-        return snapshot.hasData
-            ? SemesterList(semester: snapshot.data)
-            : Center(child: CircularProgressIndicator());
-      },
     );
   }
 }

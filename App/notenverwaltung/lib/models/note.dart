@@ -4,6 +4,7 @@ import 'package:notenverwaltung/database_helper.dart';
 import 'package:notenverwaltung/global.dart';
 import 'dart:convert';
 import 'package:intl/intl.dart';
+import 'package:notenverwaltung/models/fach.dart';
 import 'package:postgres/postgres.dart';
 
 class Note {
@@ -44,7 +45,7 @@ class Note {
 
 //Controller
 Future<List<Note>> getNoten(int fachId) async {
-  final response = await http.get('$URL_NOTEN_BY_FACH$fachId');
+  final response = await http.get(Uri.parse('$URL_NOTEN_BY_FACH$fachId'));
   if (response.statusCode == 200) {
     List responseJson = json.decode(response.body.toString());
     List<Note> noteList = createNoteList(responseJson);
@@ -61,7 +62,7 @@ Future<List<Note>> getNoten(int fachId) async {
     if (notenschnitt == 0.0 || notenschnitt.isNaN) {
       notenschnitt = 0.00;
     }
-    DatabaseHelper.instance.updateFachSchnitt(notenschnitt, fachId);
+    DatabaseHelper.instance.updateFachGetNote(notenschnitt, fachId);
 
     return noteList;
   } else {
@@ -71,7 +72,7 @@ Future<List<Note>> getNoten(int fachId) async {
 
 //Möchte was ausprobieren: gets anzahlNoten + summe von Noten
 Future<dynamic> getNotenschnitt(int fachId) async {
-  final response = await http.get('$URL_NOTEN_BY_FACH$fachId');
+  final response = await http.get(Uri.parse('$URL_NOTEN_BY_FACH$fachId'));
   if (response.statusCode == 200) {
     List responseJson = json.decode(response.body.toString());
     double noteList = createDurchschnittList(responseJson);
@@ -111,6 +112,46 @@ double createDurchschnittList(List data) {
   return schnitt;
 }
 
+Future<dynamic> getNotenschnittFachinNote(int semesterId) async {
+  final response =
+      await http.get(Uri.parse('$URL_FAECHER_BY_SEMESTER$semesterId'));
+  if (response.statusCode == 200) {
+    List responseJson = json.decode(response.body.toString());
+    double noteList = createDurchschnittList(responseJson);
+    print(noteList);
+    if (noteList == 0.0 || noteList == double.nan) {
+      noteList = 0.00;
+    }
+
+    return noteList;
+  } else {
+    throw Exception('Failed to load note');
+  }
+}
+
+double createDurchschnittListFach(List data) {
+  double summeN = 0;
+  double summeG = 0;
+  double summeNG = 0;
+
+  for (int i = 0; i < data.length; i++) {
+    if (data[i]["fach_durchschnitt"] != null &&
+        data[i]["fach_gewichtung"] != null) {
+      summeN = summeN + data[i]["fach_durchschnitt"];
+      summeG = summeG + double.parse(data[i]["fach_gewichtung"]) / 100;
+      summeNG = summeNG +
+          (data[i]["fach_durchschnitt"] *
+              (double.parse(data[i]["fach_gewichtung"]) / 100));
+    }
+  }
+  // (note*gewichtung)/summeG
+  double schnitt = summeNG / summeG;
+  if (schnitt.isNaN) {
+    schnitt = 0.0;
+  }
+  return schnitt;
+}
+
 List<Note> createNoteList(List data) {
   List<Note> list = new List();
   //DateFormat formatter = DateFormat('yyyy-MM-dd');
@@ -137,13 +178,15 @@ List<Note> createNoteList(List data) {
   return list;
 }
 
-Future deleteNote(int id, int fachId) async {
+Future deleteNote(int id, int fachId, int semesterId) async {
   String status = '';
-  final url = '$URL_NOTEN/$id';
+  final url = Uri.parse('$URL_NOTEN/$id');
   final response = await http.delete(url, headers: URL_HEADERS);
   if (response.statusCode == 200) {
+    double semesterSchnitt = await getNotenschnittFach(semesterId);
     double notenschnitt = await getNotenschnitt(fachId);
-    DatabaseHelper.instance.updateFachSchnitt(notenschnitt, fachId);
+    DatabaseHelper.instance
+        .updateFachSchnitt(notenschnitt, semesterSchnitt, fachId, semesterId);
     print('Note deleted with this id: $id');
     status = 'DONE';
   } else {
@@ -153,7 +196,7 @@ Future deleteNote(int id, int fachId) async {
 }
 
 Future<Note> getNoteById(int id) async {
-  final url = '$URL_NOTEN/$id';
+  final url = Uri.parse('$URL_NOTEN/$id');
   final response = await http.get(url, headers: URL_HEADERS);
   if (response.statusCode == 200) {
     Map<String, dynamic> mapResponse = json.decode(response.body);
@@ -164,9 +207,9 @@ Future<Note> getNoteById(int id) async {
 }
 
 Future updateNote(int noteId, TextEditingController note, gewichtung, datum,
-    name, int fachId) async {
+    name, int fachId, int semesterId) async {
   double newNote = double.parse(note.text);
-  final response = await http.put('$URL_NOTEN/$noteId',
+  final response = await http.put(Uri.parse('$URL_NOTEN/$noteId'),
       headers: URL_HEADERS,
       body: json.encode({
         'note': newNote,
@@ -176,18 +219,23 @@ Future updateNote(int noteId, TextEditingController note, gewichtung, datum,
       }));
   print("id: $noteId name: ${name.text}");
   if (response.statusCode == 200) {
+    double semesterSchnitt = await getNotenschnittFach(semesterId);
+
     double notenschnitt = await getNotenschnitt(fachId);
-    DatabaseHelper.instance.updateFachSchnitt(notenschnitt, fachId);
+    DatabaseHelper.instance
+        .updateFachSchnitt(notenschnitt, semesterSchnitt, fachId, semesterId);
     print(response.statusCode);
     return response;
   } else {
     print('fachId vor notenschnitt' + fachId.toString());
+    double semesterSchnitt = await getNotenschnittFach(semesterId);
     double notenschnitt = await getNotenschnitt(fachId);
     print('Fehler ' +
         fachId.toString() +
         ' notenschnitt' +
         notenschnitt.toString());
-    DatabaseHelper.instance.updateFachSchnitt(notenschnitt, fachId);
+    DatabaseHelper.instance
+        .updateFachSchnitt(notenschnitt, semesterSchnitt, fachId, semesterId);
     print(response.statusCode);
     print(response.body);
     return response;
@@ -195,13 +243,13 @@ Future updateNote(int noteId, TextEditingController note, gewichtung, datum,
   }
 }
 
-Future createNote(
-    TextEditingController note, gewichtung, datum, name, int fachId) async {
+Future createNote(TextEditingController note, gewichtung, datum, name,
+    int fachId, int semesterId) async {
   double newNote = double.parse(note.text);
   //int newGewichtung = int.parse(gewichtung.text);
 
   //print(newGewichtung);
-  final response = await http.post(URL_NOTEN,
+  final response = await http.post(Uri.parse(URL_NOTEN),
       headers: URL_HEADERS,
       body: json.encode({
         'note': newNote,
@@ -213,14 +261,23 @@ Future createNote(
   print(
       "note: ${newNote}, gewichtung: ${gewichtung.text}, datum: ${datum.text}, name: ${name.text}, fachId: $fachId");
   print("somethin happend in create NOTE");
+  Fach fach = await getFachById(fachId);
   if (response.statusCode == 200) {
     print(response.body.toString());
+
+    /*double notenschnitt = await getNotenschnittFach(semesterId);
+    DatabaseHelper.instance.updateSemesterSchnitt(notenschnitt, semesterId);*/
+    double semesterSchnitt = await getNotenschnittFach(fach.semesterId);
     double notenschnitt = await getNotenschnitt(fachId);
-    DatabaseHelper.instance.updateFachSchnitt(notenschnitt, fachId);
+    DatabaseHelper.instance.updateFachSchnitt(
+        notenschnitt, semesterSchnitt, fachId, fach.semesterId);
     return response;
   } else {
+    double semesterSchnitt = await getNotenschnittFach(fach.semesterId);
+
     double notenschnitt = await getNotenschnitt(fachId);
-    DatabaseHelper.instance.updateFachSchnitt(notenschnitt, fachId);
+    DatabaseHelper.instance.updateFachSchnitt(
+        notenschnitt, semesterSchnitt, fachId, fach.semesterId);
     print(response.statusCode);
     print(response.body.toString());
     return response;

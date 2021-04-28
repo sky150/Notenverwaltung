@@ -1,3 +1,4 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:notenverwaltung/global.dart';
@@ -33,7 +34,7 @@ class Semester {
 }
 
 Future<List<Semester>> getSemester() async {
-  final response = await http.get(URL_SEMESTER);
+  final response = await http.get(Uri.parse(URL_SEMESTER));
   if (response.statusCode == 200) {
     List responseJson = json.decode(response.body.toString());
     List<Semester> semesterList = createSemesterList(responseJson);
@@ -99,7 +100,7 @@ double avg(int id) {
 
 Future deleteSemester(int id) async {
   String status = '';
-  final url = '$URL_SEMESTER/$id';
+  final url = Uri.parse('$URL_SEMESTER/$id');
   final response = await http.delete(url, headers: URL_HEADERS);
   if (response.statusCode == 200) {
     print('Semester deleted with this id: $id');
@@ -111,7 +112,7 @@ Future deleteSemester(int id) async {
 }
 
 Future<Semester> getSemesterById(int id) async {
-  final url = '$URL_SEMESTER/$id';
+  final url = Uri.parse('$URL_SEMESTER/$id');
   final response = await http.get(url, headers: URL_HEADERS);
   if (response.statusCode == 200) {
     Map<String, dynamic> mapResponse = json.decode(response.body);
@@ -123,7 +124,7 @@ Future<Semester> getSemesterById(int id) async {
 
 Future updateSemester(int semesterId, double durchschnitt,
     TextEditingController name, jahr, notiz) async {
-  final response = await http.put('$URL_SEMESTER/$semesterId',
+  final response = await http.put(Uri.parse('$URL_SEMESTER/$semesterId'),
       headers: URL_HEADERS,
       body: json.encode({
         'semester_name': name.text,
@@ -144,7 +145,7 @@ Future updateSemester(int semesterId, double durchschnitt,
 
 Future createSemester(TextEditingController name, jahr, notiz) async {
   print("Semester eingaben: " + name.text + " " + jahr.text + " " + notiz.text);
-  final response = await http.post(URL_SEMESTER,
+  final response = await http.post(Uri.parse(URL_SEMESTER),
       headers: URL_HEADERS,
       body: json.encode({
         'semester_name': name.text,

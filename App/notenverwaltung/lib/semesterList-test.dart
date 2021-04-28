@@ -1,25 +1,37 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:notenverwaltung/authentication_service.dart';
-import 'package:notenverwaltung/fach_page.dart';
-import 'package:notenverwaltung/UI/home/components/add_semester.dart';
-import 'package:notenverwaltung/global.dart';
+import 'package:notenverwaltung/fach_page-test.dart';
 import 'UI/Cards/semester_card.dart';
-import 'models/semester.dart';
-import 'database_helper.dart';
-import 'dart:io' show Directory;
-import 'package:path/path.dart' show join;
-import 'package:sqflite/sqflite.dart';
-import 'package:path_provider/path_provider.dart'
-    show getApplicationDocumentsDirectory;
+import 'UI/home/components/add_semester.dart';
+import 'database.dart';
+import 'fach_page.dart';
+import 'global.dart';
+import 'semester.dart';
 
-class SemesterList extends StatelessWidget {
-  final List<Semester> semester;
-  SemesterList({Key key, this.semester}) : super(key: key);
+class SemesterList extends StatefulWidget {
+  final List<Semester> listItems;
+
+  SemesterList(this.listItems);
+
+  @override
+  _ListState createState() => _ListState();
+}
+
+class _ListState extends State<SemesterList> {
+  void like(Function callBack) {
+    this.setState(() {
+      callBack();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return ListView.builder(
       itemBuilder: (context, index) {
+        var semester = this.widget.listItems[index];
+        print("im Listview builder : " + semester.durchschnitt.toString());
         return GestureDetector(
             child: Container(
           margin: EdgeInsets.only(
@@ -33,29 +45,34 @@ class SemesterList extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Dismissible(
-                  key: Key(semester[index].id.toString()),
+                  key: Key(semester.id.key),
                   background: Container(color: Colors.red),
                   child: SemesterCard(
-                    semesterName: semester[index].name,
-                    year: semester[index].jahr,
-                    semesterAvg: semester[index].durchschnitt,
+                    semesterName: semester.name,
+                    year: semester.jahr,
+                    semesterAvg: semester.durchschnitt != null
+                        ? double.parse(
+                            semester.durchschnitt.toStringAsPrecision(2))
+                        : null,
                     press: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           //DetailsScreen()
                           builder: (context) =>
-                              FachScreen(semesterId: semester[index].id),
+                              FachTest(semesterId: semester.id),
                         ),
                       );
                     },
                     longPress: () {
-                      int selectedId = semester[index].id;
+                      print(semester.durchschnitt);
+                      //int selectedId = semester.id;
+                      //Semester selected = semester;
+                      print(semester.name);
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) =>
-                              Container(), //AddSemester(id: selectedId),
+                          builder: (context) => AddSemester(semester: semester),
                         ),
                       );
                     },
@@ -65,9 +82,9 @@ class SemesterList extends StatelessWidget {
                         context: context,
                         builder: (BuildContext context) {
                           return AlertDialog(
-                            title: new Text("${semester[index].name}"),
+                            title: new Text("${semester.name}"),
                             content: Text(
-                                "Wollen sie ${semester[index].name} wirklich löschen?"),
+                                "Wollen sie ${semester.name} wirklich löschen?"),
                             actions: <Widget>[
                               FlatButton(
                                   onPressed: () => Navigator.of(context).pop(),
@@ -75,10 +92,7 @@ class SemesterList extends StatelessWidget {
                               FlatButton(
                                 onPressed: () {
                                   Navigator.of(context).pop(true);
-                                  if ('DONE' ==
-                                      deleteSemester(semester[index].id)) {
-                                    semester.removeAt(index);
-                                  }
+                                  deleteSemester(semester.id);
                                 },
                                 child: const Text("LÖSCHEN"),
                               ),
@@ -91,40 +105,10 @@ class SemesterList extends StatelessWidget {
           ),
         ));
       },
-      itemCount: semester.length,
+      itemCount: this.widget.listItems.length,
       scrollDirection: Axis.vertical,
       physics: NeverScrollableScrollPhysics(),
       shrinkWrap: true,
-    );
-  }
-}
-
-enum HttpRequestStatus { NOT_DONE, DONE, ERROR }
-
-class SemesterScreen extends StatelessWidget {
-  const SemesterScreen({
-    Key key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
-    return FutureBuilder(
-      future: getSemester(),
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          print(snapshot.error);
-        } else if (snapshot.data == null) {
-          return Container(
-            child: Container(
-              child: Text("Loading..."),
-            ),
-          );
-        }
-        return snapshot.hasData
-            ? SemesterList(semester: snapshot.data)
-            : Center(child: CircularProgressIndicator());
-      },
     );
   }
 }

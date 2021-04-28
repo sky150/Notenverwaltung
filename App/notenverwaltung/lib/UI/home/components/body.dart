@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:notenverwaltung/UI/home/components/add_semester.dart';
+import 'package:notenverwaltung/authentication_service.dart';
 import 'package:notenverwaltung/global.dart';
+import 'package:notenverwaltung/semester-test_screen.dart';
 
 import 'featurred_plants.dart';
 import 'header_with_seachbox.dart';
 import '../../../semester_screen.dart';
 import '../../../components/title_with_more_bbtn.dart';
+import 'package:provider/provider.dart';
 
 class Body extends StatelessWidget {
   @override
@@ -27,7 +30,10 @@ class Body extends StatelessWidget {
                       builder: (context) => AddSemester(),
                     ));
               }),
-          SemesterScreen(),
+          RaisedButton(onPressed: () {
+            context.read<AuthenticationService>().signOut();
+          }),
+          SemesterTest(),
           TitleWithMoreBtn(title: "Statistiken", press: () {}),
           FeaturedPlants(),
           SizedBox(height: kDefaultPadding),

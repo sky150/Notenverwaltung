@@ -1,37 +1,44 @@
 import 'dart:async';
 
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:notenverwaltung/UI/TextFields/MyTextFormField.dart';
 import 'package:notenverwaltung/components/my_bottom_nav_bar.dart';
+import 'package:notenverwaltung/database.dart';
+import 'package:notenverwaltung/fach.dart';
 import 'package:notenverwaltung/global.dart';
 import 'package:intl/intl.dart';
-import 'package:notenverwaltung/models/note.dart';
-import 'package:notenverwaltung/note_screen.dart';
+import 'package:notenverwaltung/note.dart';
+import 'package:notenverwaltung/note_page.dart';
+//import 'package:notenverwaltung/models/fach.dart';
+//import 'package:notenverwaltung/models/note.dart';
+//import 'package:notenverwaltung/note_screen.dart';
 
 class AddNote extends StatefulWidget {
-  final int id;
-  final int fachId;
-  AddNote({this.id, this.fachId}) : super();
+  final Note note;
+  final DatabaseReference fachId;
+  AddNote({this.note, this.fachId}) : super();
 
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
-    print("AddNote id= " + id.toString() + " fachId: " + fachId.toString());
-    return TestForm(fachId: fachId);
+    print("AddNote id= " + note.toString() + " fachId: " + fachId.toString());
+    return TestForm(note: note, fachId: fachId);
   }
 }
 
 class TestForm extends State<AddNote> {
-  final int fachId;
-  //Note note = Note();
+  final Note note;
+  final DatabaseReference fachId;
   bool isLoadedSemester = false;
-  TestForm({this.fachId}) : super();
+  TestForm({this.note, this.fachId}) : super();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: buildAppBar(),
-      body: FutureBuilder(
+      body: TestFormState(note: note, fachId: fachId),
+      /*FutureBuilder(
         future: getNoteById(widget.id),
         builder: (context, snapshot) {
           if (snapshot.hasError) print(snapshot.error);
@@ -42,7 +49,7 @@ class TestForm extends State<AddNote> {
             return Center(child: CircularProgressIndicator());
           }
         },
-      ),
+      ),*/
       bottomNavigationBar: MyBottomNavBar(),
     );
   }
@@ -60,20 +67,20 @@ class TestForm extends State<AddNote> {
 
 class TestFormState extends StatefulWidget {
   final Note note;
-  final int fachId;
+  final DatabaseReference fachId;
   TestFormState({this.note, this.fachId}) : super();
 
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
-    return _TestFormState(fachId: fachId);
+    return _TestFormState(note: note, fachId: fachId);
   }
 }
 
 class _TestFormState extends State<TestFormState> {
-  Note note = new Note();
-  final int fachId;
-  _TestFormState({this.fachId}) : super();
+  final Note note;
+  final DatabaseReference fachId;
+  _TestFormState({this.note, this.fachId}) : super();
   final _formKey = GlobalKey<FormState>();
   //NoteModel model = NoteModel();
   final DateFormat formatter = DateFormat('dd.MM.yyyy');
@@ -107,41 +114,43 @@ class _TestFormState extends State<TestFormState> {
   @override
   Widget build(BuildContext context) {
     final halfMediaWidth = MediaQuery.of(context).size.width / 2.0;
-    if (widget.note.id == null) {
-      setState(() {
-        this.isLoadedSemester = false;
-      });
-    } else {
-      setState(() {
-        this.note = Note.fromNote(widget.note);
-        this.isLoadedSemester = true;
-      });
-    }
     print("ForeignKey fach id: " + this.fachId.toString());
 
-    String noteValue = this.note.note.toString();
+    /*String noteValue = this.note.note.toString();
     if (noteValue == 'null') {
       noteValue = '';
-    }
-    TextEditingController noteNote = TextEditingController(text: noteValue);
-    TextEditingController noteGewichtung;
-    if (this.note.datum != null) {
+    }*/
+    TextEditingController noteNote =
+        TextEditingController(); //TextEditingController(text: noteValue);
+    TextEditingController noteGewichtung = TextEditingController();
+    /*if (this.note.datum != null) {
       String newNote = this.note.gewichtung.toString();
       noteGewichtung = TextEditingController(text: newNote);
     } else {
       noteGewichtung = TextEditingController()..text = "100";
-    }
+    }*/
 
-    TextEditingController noteDatum;
-    if (this.note.datum != null) {
+    TextEditingController noteDatum = TextEditingController()
+      ..text = formatter.format(selectedDate);
+    /*if (this.note.datum != null) {
       //var parsedDate = DateTime.parse(this.note.datum);
       noteDatum = TextEditingController(text: this.note.datum);
     } else {
       noteDatum = TextEditingController()
         ..text = formatter.format(selectedDate);
+    }*/
+    TextEditingController noteName = TextEditingController();
+    if (note != null) {
+      noteDatum = TextEditingController(text: this.note.datum);
+      noteName = TextEditingController(text: this.note.name);
+      noteNote = TextEditingController(text: this.note.note.toString());
+      noteGewichtung =
+          TextEditingController(text: this.note.gewichtung.toString());
+      isLoadedSemester = true;
     }
-    TextEditingController noteName =
-        TextEditingController(text: this.note.name);
+    //TextEditingController(text: this.note.name);
+    Fach object; //= new Fach(id: fachId);
+    print("fach id für semesterId: " + fachId.toString());
 
     return Form(
       key: _formKey,
@@ -222,7 +231,32 @@ class _TestFormState extends State<TestFormState> {
                     color: kPrimaryColor,
                     onPressed: () async {
                       if (_formKey.currentState.validate()) {
+                        var note;
                         if (isLoadedSemester) {
+                          note = new Note(
+                              noteName.text,
+                              double.parse(noteNote.text),
+                              int.parse(noteGewichtung.text),
+                              noteDatum.text);
+                          updateNote(note, this.note.id);
+                        } else {
+                          note = new Note(
+                              noteName.text,
+                              double.parse(noteNote.text),
+                              int.parse(noteGewichtung.text),
+                              noteDatum.text);
+                          note.setId(saveNote(note, fachId));
+                        }
+                        Timer(Duration(seconds: 1), () {
+                          Navigator.pop(context);
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => NoteTest(fachId: fachId),
+                            ),
+                          );
+                        });
+                        /*if (isLoadedSemester) {
                           print("entered in update");
                           await updateNote(
                               this.note.id,
@@ -230,7 +264,8 @@ class _TestFormState extends State<TestFormState> {
                               noteGewichtung,
                               noteDatum,
                               noteName,
-                              this.note.fachId);
+                              this.note.fachId,
+                              object.semesterId);
                           Timer(Duration(seconds: 1), () {
                             Navigator.pop(context);
                             Navigator.pushReplacement(
@@ -242,8 +277,10 @@ class _TestFormState extends State<TestFormState> {
                           });
                         } else {
                           print("the id" + this.fachId.toString());
+                          print("the foreignkei semesterId: " +
+                              object.semesterId.toString());
                           await createNote(noteNote, noteGewichtung, noteDatum,
-                              noteName, this.fachId);
+                              noteName, this.fachId, object.semesterId);
                           print("entered in create note");
                           Timer(Duration(seconds: 1), () {
                             Navigator.pop(context);
@@ -254,7 +291,7 @@ class _TestFormState extends State<TestFormState> {
                                     builder: (context) =>
                                         NoteScreen(fachId: this.fachId)));
                           });
-                        }
+                        }*/
                       }
                     },
                     child: Text(

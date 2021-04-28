@@ -1,8 +1,9 @@
 import 'package:http/http.dart' as http;
-import 'package:notenverwaltung/global.dart';
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:notenverwaltung/database_helper.dart';
+
+import '../global.dart';
 
 class Fach {
   int id;
@@ -44,7 +45,8 @@ class Fach {
 }
 
 Future<dynamic> getNotenschnittFach(int semesterId) async {
-  final response = await http.get('$URL_FAECHER_BY_SEMESTER$semesterId');
+  final response =
+      await http.get(Uri.parse('$URL_FAECHER_BY_SEMESTER$semesterId'));
   if (response.statusCode == 200) {
     List responseJson = json.decode(response.body.toString());
     double noteList = createDurchschnittList(responseJson);
@@ -84,7 +86,8 @@ double createDurchschnittList(List data) {
 
 //Controller
 Future<List<Fach>> getFaecher(int semesterId) async {
-  final response = await http.get('$URL_FAECHER_BY_SEMESTER$semesterId');
+  final response =
+      await http.get(Uri.parse('$URL_FAECHER_BY_SEMESTER$semesterId'));
   if (response.statusCode == 200) {
     List responseJson = json.decode(response.body.toString());
     List<Fach> fachList = createFachList(responseJson);
@@ -134,7 +137,7 @@ List<Fach> createFachList(List data) {
 
 Future deleteFach(int id, int semesterId) async {
   String status = '';
-  final url = '$URL_FAECHER/$id';
+  final url = Uri.parse('$URL_FAECHER/$id');
   final response = await http.delete(url, headers: URL_HEADERS);
   if (response.statusCode == 200) {
     double notenschnitt = await getNotenschnittFach(semesterId);
@@ -148,7 +151,7 @@ Future deleteFach(int id, int semesterId) async {
 }
 
 Future<Fach> getFachById(int id) async {
-  final url = '$URL_FAECHER/$id';
+  final url = Uri.parse('$URL_FAECHER/$id');
   final response = await http.get(url, headers: URL_HEADERS);
   if (response.statusCode == 200) {
     Map<String, dynamic> mapResponse = json.decode(response.body);
@@ -160,7 +163,7 @@ Future<Fach> getFachById(int id) async {
 
 Future updateFach(int fachId, double durchschnitt, double wunschNote,
     TextEditingController name, gewichtung, int semesterId) async {
-  final response = await http.put('$URL_FAECHER/$fachId',
+  final response = await http.put(Uri.parse('$URL_FAECHER/$fachId'),
       headers: URL_HEADERS,
       body: json.encode({
         'fach_name': name.text,
@@ -185,7 +188,7 @@ Future updateFach(int fachId, double durchschnitt, double wunschNote,
 Future createFach(
     TextEditingController name, gewichtung, wunschNote, int semesterId) async {
   print("Wunsch note in create fach " + wunschNote.text);
-  final response = await http.post('$URL_FAECHER',
+  final response = await http.post(Uri.parse('$URL_FAECHER'),
       headers: URL_HEADERS,
       body: json.encode({
         'fach_name': name.text,

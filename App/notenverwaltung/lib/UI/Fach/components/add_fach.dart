@@ -1,32 +1,36 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:notenverwaltung/UI/TextFields/MyTextFormField.dart';
+import 'package:notenverwaltung/database.dart';
+import 'package:notenverwaltung/fach.dart';
+import 'package:notenverwaltung/fach_page-test.dart';
 import 'package:notenverwaltung/fach_page.dart';
-import 'package:notenverwaltung/models/fach.dart';
+//import 'package:notenverwaltung/models/fach.dart';
 import 'package:notenverwaltung/components/my_bottom_nav_bar.dart';
 import 'package:notenverwaltung/global.dart';
 import 'package:notenverwaltung/models/note.dart';
 import 'dart:async';
 
 class AddFach extends StatefulWidget {
-  final int id;
-  final int semesterId;
-  AddFach({this.id, this.semesterId}) : super();
+  final Fach fach;
+  final DatabaseReference semesterId;
+  AddFach({this.fach, this.semesterId}) : super();
 
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
     print("AddFach id= " +
-        id.toString() +
+        fach.toString() +
         " semesterId: " +
         semesterId.toString());
-    return _FormState(semesterId: semesterId);
+    return _FormState(fach: fach, semesterId: semesterId);
   }
 }
 
 class _FormState extends State<AddFach> {
-  final int semesterId;
-  _FormState({this.semesterId}) : super();
-  Fach fach = Fach();
+  final DatabaseReference semesterId;
+  _FormState({this.fach, this.semesterId}) : super();
+  final Fach fach;
   bool isLoadedSemester = false;
 
   @override
@@ -34,7 +38,8 @@ class _FormState extends State<AddFach> {
     print("Semester id: " + semesterId.toString());
     return Scaffold(
       appBar: buildAppBar(),
-      body: FutureBuilder(
+      body: DetailFach(fach: fach, semesterId: semesterId),
+      /*FutureBuilder(
         future: getFachById(widget.id),
         builder: (context, snapshot) {
           if (snapshot.hasError) print(snapshot.error);
@@ -45,7 +50,7 @@ class _FormState extends State<AddFach> {
             return Center(child: CircularProgressIndicator());
           }
         },
-      ),
+      ),*/
       bottomNavigationBar: MyBottomNavBar(),
     );
   }
@@ -58,50 +63,31 @@ class _FormState extends State<AddFach> {
   }
 }
 
-class DetailFach extends StatefulWidget {
+class DetailFach extends StatelessWidget {
   final Fach fach;
-  final int semesterId;
-  DetailFach({Key key, this.fach, this.semesterId}) : super(key: key);
-
-  @override
-  State<StatefulWidget> createState() {
-    // TODO: implement createState
-    return _DetailFachState(semesterId: semesterId);
-  }
-}
-
-class _DetailFachState extends State<DetailFach> {
-  Fach fach = new Fach();
+  final DatabaseReference semesterId;
   bool isLoadedSemester = false;
-  final int semesterId;
-  _DetailFachState({this.semesterId}) : super();
   final _formKey = GlobalKey<FormState>();
+
+  DetailFach({Key key, this.fach, this.semesterId}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final halfMediaWidth = MediaQuery.of(context).size.width / 2.0;
-    // TODO: implement build
-    if (widget.fach.id == null) {
-      setState(() {
-        this.isLoadedSemester = false;
-      });
-    } else {
-      setState(() {
-        this.fach = Fach.fromFach(widget.fach);
-        this.isLoadedSemester = true;
-      });
-    }
 
-    String wunschNoteValue = this.fach.wunschNote.toString();
-    if (wunschNoteValue == 'null') {
-      wunschNoteValue = '';
+    TextEditingController fachName = TextEditingController();
+    TextEditingController fachGewichtung = TextEditingController();
+    TextEditingController fachWunschNote = TextEditingController();
+    if (fach != null) {
+      fachName = TextEditingController(text: this.fach.name);
+      fachGewichtung =
+          TextEditingController(text: this.fach.gewichtung.toString());
+      fachWunschNote =
+          TextEditingController(text: this.fach.wunschNote.toString());
+      isLoadedSemester = true;
+      print(
+          "From Add Fach: " + this.fach.name + this.fach.gewichtung.toString());
     }
-    TextEditingController fachName =
-        TextEditingController(text: this.fach.name);
-    TextEditingController fachGewichtung =
-        TextEditingController(text: this.fach.gewichtung);
-    TextEditingController fachWunschNote =
-        TextEditingController(text: wunschNoteValue);
 
     final MyTextFormField txtName = MyTextFormField(
       controller: fachName,
@@ -155,7 +141,7 @@ class _DetailFachState extends State<DetailFach> {
       color: kPrimaryColor,
       onPressed: () async {
         if (_formKey.currentState.validate()) {
-          if (isLoadedSemester) {
+          /*if (isLoadedSemester) {
             print("entered in update");
             await updateFach(
                 this.fach.id,
@@ -175,22 +161,28 @@ class _DetailFachState extends State<DetailFach> {
                 ),
               );
             });
+          }*/
+          var fach;
+          if (isLoadedSemester) {
+            fach = new Fach(fachName.text, int.parse(fachGewichtung.text),
+                this.fach.durchschnitt, double.parse(fachWunschNote.text));
+            updateFach(fach, this.fach.id);
+          } else {
+            print("Fach name: " + fachName.text);
+            print("Fach gewichtung: " + fachGewichtung.text);
+            fach = new Fach(fachName.text, int.parse(fachGewichtung.text), null,
+                double.parse(fachWunschNote.text));
+            fach.setId(saveFach(fach, semesterId));
           }
-          if (!isLoadedSemester) {
-            print("the id" + this.semesterId.toString());
-            await createFach(
-                fachName, fachGewichtung, fachWunschNote, this.semesterId);
-            print("entered in create fach");
-            Timer(Duration(seconds: 1), () {
-              Navigator.pop(context);
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => FachScreen(semesterId: this.semesterId),
-                ),
-              );
-            });
-          }
+          Timer(Duration(seconds: 1), () {
+            Navigator.pop(context);
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => FachTest(semesterId: semesterId),
+              ),
+            );
+          });
         }
       },
       child: Text(

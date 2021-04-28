@@ -1,3 +1,4 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:notenverwaltung/components/my_bottom_nav_bar.dart';
 import 'package:notenverwaltung/UI/Fach/components/add_fach.dart';
@@ -52,7 +53,8 @@ class SemesterList extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => AddFach(id: selectedId),
+                            builder: (context) =>
+                                Container(), //AddFach(id: selectedId),
                           ),
                         );
                       },
@@ -109,7 +111,7 @@ class SemesterList extends StatelessWidget {
 class FachScreen extends StatelessWidget {
   final int semesterId;
   FachScreen({this.semesterId}) : super();
-
+  DatabaseReference semesterIdw;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -125,7 +127,7 @@ class FachScreen extends StatelessWidget {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => AddFach(semesterId: semesterId),
+                        builder: (context) => AddFach(semesterId: semesterIdw),
                       ));
                 }),
             FutureBuilder(

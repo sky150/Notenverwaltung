@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "697061152801",
+    "project_id": "notenverwaltung-d4137",
+    "storage_bucket": "notenverwaltung-d4137.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:697061152801:android:45bf8b436f4c9223766b60",
+        "android_client_info": {
+          "package_name": "com.example.notenverwaltung"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "697061152801-24dp4nd15tokgepcfjk646dq33uj1lca.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD217zBAvp0Wp2xJ0WmfYFd5ZUZQJsZrjo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "697061152801-24dp4nd15tokgepcfjk646dq33uj1lca.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

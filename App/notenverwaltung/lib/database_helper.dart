@@ -43,21 +43,48 @@ class DatabaseHelper {
     // Get a reference to the database.
   }
 
-  updateFachSchnitt(double nr, int id) async {
+  updateFachSchnitt(double fachSchnitt, double semesterSchnitt, int fachId,
+      int semesterId) async {
     var connection = PostgreSQLConnection("10.0.2.2", 5433, "notenverwaltung",
         username: "nv_user", password: "1234");
     await connection.open();
-    if (nr == 0.0) {
+    if (fachSchnitt == 0.0) {
       await connection.query(
           'UPDATE _fach SET fach_durchschnitt = \'\' where fach_id = ' +
-              id.toString() +
+              fachId.toString() +
+              ';');
+    } else {
+      await connection.query('UPDATE _fach SET fach_durchschnitt = ' +
+          fachSchnitt.toStringAsFixed(2) +
+          ' where fach_id = ' +
+          fachId.toString() +
+          ';');
+      await connection.query('UPDATE _semester SET semester_durchschnitt = ' +
+          semesterSchnitt.toStringAsFixed(2) +
+          'where semester_id = ' +
+          semesterId.toString() +
+          ';');
+    }
+    await connection.close();
+    // Get a reference to the database.
+  }
+
+  updateFachGetNote(double fachSchnitt, int fachId) async {
+    var connection = PostgreSQLConnection("10.0.2.2", 5433, "notenverwaltung",
+        username: "nv_user", password: "1234");
+    await connection.open();
+    if (fachSchnitt == 0.0) {
+      await connection.query(
+          'UPDATE _fach SET fach_durchschnitt = \'\' where fach_id = ' +
+              fachId.toString() +
               ';');
     }
     await connection.query('UPDATE _fach SET fach_durchschnitt = ' +
-        nr.toStringAsFixed(2) +
+        fachSchnitt.toStringAsFixed(2) +
         ' where fach_id = ' +
-        id.toString() +
+        fachId.toString() +
         ';');
+
     await connection.close();
     // Get a reference to the database.
   }
