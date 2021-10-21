@@ -1,88 +1,150 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'fach.dart';
 import 'note.dart';
 import 'semester.dart';
 
 final databaseReference = FirebaseDatabase.instance.reference();
+final firestoreInstance = FirebaseFirestore.instance;
 
 //Get Notenschnitt
 
 //Semester
-DatabaseReference saveSemester(Semester semester) {
-  var id = databaseReference.child('semester/').push();
-  id.set(semester.toJson());
-  return id;
-}
-
-void updateS(Semester semester, DatabaseReference id) {
-  print(semester.toJson());
-  print(semester.id.key);
-  id.update(semester.toJson());
-}
-
-/*Future deleteSemester(context) async {
-  var uuid = await Provider.of(context).auth.getCurrentUID;
-}*/
 Future<List<Semester>> getAllSemester() async {
-  DataSnapshot dataSnapshot = await databaseReference.child('semester/').once();
+  //DataSnapshot dataSnapshot = await databaseReference.child('semester/').once();
   List<Semester> semesterList = [];
-  if (dataSnapshot.value != null) {
+  /*if (dataSnapshot.value != null) {
     dataSnapshot.value.forEach((key, value) {
       Semester semester = createSemester(value);
       semester.setId(databaseReference.child('semester/' + key));
       semesterList.add(semester);
     });
+  }*/
+  firestoreInstance.collection("semester/").get().then((querySnapshot) {
+    querySnapshot.docs.forEach((result) {
+      //print("1. database = result.data(): " + result.data().toString());
+      Semester semester = createSemester(result.data());
+      print(databaseReference.child('semester/' + result.id).toString());
+      semester.setId(databaseReference.child('semester/' + result.id));
+      semesterList.add(semester);
+    });
+  });
+  if (semesterList.isEmpty) {
+    return [];
+  } else {
+    return semesterList;
   }
-  return semesterList;
 }
 
-void deleteSemester(DatabaseReference id) {
-  id.remove();
+DatabaseReference saveSemester(Semester semester) {
+  /*var id = databaseReference.child('semester/').push();
+  id.set(semester.toJson());
+  return id;*/
+  print(firestoreInstance.toString());
+  print(databaseReference.toString());
+  firestoreInstance
+      .collection('semester/')
+      .add(semester.toJson())
+      .then((value) => {print(value.id)});
 }
 
-//Fach
-DatabaseReference saveFach(Fach fach, DatabaseReference semesterId) {
-  var id =
-      databaseReference.child('semester/' + semesterId.key + '/fach/').push();
-  id.set(fach.toJson());
-  return id;
-}
-
-void updateFach(Fach fach, DatabaseReference id) {
-  id.update(fach.toJson());
-}
-
-void deleteFach(DatabaseReference id) {
-  var idFach = databaseReference.child('fach/' + id.key + '/note/').push();
-  print("Fachid: " + idFach.key);
-  idFach.remove();
-  id.remove();
+void updateS(Semester semester, String id) {
+  print(semester.toJson());
+  //print(semester.id.key);
+  firestoreInstance
+      .collection('semester/')
+      .doc(id)
+      .update(semester.toJson())
+      .then((value) => print("success!"));
+  //id.update(semester.toJson());
 }
 
 /*Future deleteSemester(context) async {
   var uuid = await Provider.of(context).auth.getCurrentUID;
 }*/
-Future<List<Fach>> getAllFach(DatabaseReference id) async {
-  DataSnapshot dataSnapshot =
-      await databaseReference.child('semester/' + id.key + '/fach/').once();
+
+void deleteSemester(String id) {
+  print(id);
+  firestoreInstance
+      .collection('semester/')
+      .doc(id)
+      .delete()
+      .then((value) => print("success!"));
+
+  //id.remove();
+}
+
+//Fach
+DatabaseReference saveFach(Fach fach, String semesterId) {
+  print(firestoreInstance.toString());
+  print(databaseReference.toString());
+  firestoreInstance
+      .collection('semester/' + semesterId + '/fach/')
+      .add(fach.toJson())
+      .then((value) => {print(value.id)});
+  /*var id =
+      databaseReference.child('semester/' + semesterId.key + '/fach/').push();
+  id.set(fach.toJson());
+  return id;*/
+}
+
+void updateFach(Fach fach, String id, String semesterId) {
+  firestoreInstance
+      .collection("semester/" + semesterId + "/fach/")
+      .doc(id)
+      .update(fach.toJson())
+      .then((value) => print("success!"));
+}
+
+void deleteFach(String semesterId, String fachId) {
+  /*List<String> path = id.path.split(id.key);
+  print(path[0]);*/
+
+  firestoreInstance
+      .collection("semester/" + semesterId + "/fach/")
+      .doc(fachId)
+      .delete()
+      .then((value) => print("success!"));
+}
+
+Future<List<Fach>> getAllFach(String id) async {
+  /*DataSnapshot dataSnapshot =
+      await databaseReference.child('semester/' + id + '/fach/').once();*/
   List<Fach> fachList = [];
-  if (dataSnapshot.value != null) {
+  /*if (dataSnapshot.value != null) {
     dataSnapshot.value.forEach((key, value) {
       Fach fach = createFach(value);
       fach.setId(
           databaseReference.child('semester/' + id.key + '/fach/' + key));
       fachList.add(fach);
     });
-  }
+  }*/
+  //getFachschnitt(fachList, id);
+  final firestoreInstance = FirebaseFirestore.instance;
+  String coll = "semester/" + id + "/fach/";
+  firestoreInstance.collection(coll).get().then((querySnapshot) {
+    querySnapshot.docs.forEach((result) {
+      Fach fach = createFach(result.data());
+      print(result.data());
+      fach.setId(
+          databaseReference.child('semester/' + id + '/fach/' + result.id));
+      fachList.add(fach);
+    });
+  });
+  //getFachschnitt(fachList, id);
   return fachList;
 }
 
-void updateFachschnitt(double schnitt, DatabaseReference semesterId) {
-  semesterId.update({'semester_durchschnitt': schnitt});
-  print("updated semester_durchschnitt");
+void updateFachschnitt(double schnitt, String semesterId) {
+  //List<String> path = semesterId.split("/");
+  firestoreInstance.collection("semester/").doc(semesterId).update(
+      {'semester_durchschnitt': schnitt}).then((value) => print("success!"));
+
+  //semesterId.update({'semester_durchschnitt': schnitt});
+  //print("updated semester_durchschnitt");
 }
 
-double getFachschnitt(List list, DatabaseReference semesterId) {
+double getFachschnitt(List list, String semesterId) {
   double schnitt;
   if (list.isEmpty) {
     return 0.0;
@@ -111,27 +173,49 @@ double getFachschnitt(List list, DatabaseReference semesterId) {
 }
 
 //Note
-DatabaseReference saveNote(Note note, DatabaseReference fachId) {
-  var id = databaseReference.child(fachId.path + '/note/').push();
+DatabaseReference saveNote(Note note, String fachId) {
+  /*var id = databaseReference.child(fachId.path + '/note/').push();
   print("fach path " + fachId.path);
   /*databaseReference.parent();*/
   id.set(note.toJson());
-  return id;
+  return id;*/
+  String id;
+  print("Neue Fach id = " + fachId);
+  firestoreInstance
+      .collection(fachId + '/note/')
+      .add(note.toJson())
+      .then((value) => print("success!"));
+  //print("Neue Note id = " + id);
+  //print("Neue Fach id = " + fachId);
+  /*DatabaseReference newFachId = FirebaseDatabase.instance.reference().child(id);
+  print("Neue Rückgabewert = " + newFachId.key);
+  return newFachId;*/
 }
 
-void updateNote(Note note, DatabaseReference id) {
-  id.update(note.toJson());
+void updateNote(Note note, String id, String fachId) {
+  /*print(id.path);
+  print(id.path.split(id.key));
+  List<String> path = id.path.split(id.key);
+  print(path[0]);*/
+  firestoreInstance
+      .collection(fachId + "/note/")
+      .doc(id)
+      .update(note.toJson())
+      .then((value) => print("success!"));
+
+  //id.update(note.toJson());
 }
 
-void deleteNote(DatabaseReference id) {
-  id.remove();
+void deleteNote(String path, String id) {
+  firestoreInstance
+      .collection(path + "/note/")
+      .doc(id)
+      .delete()
+      .then((value) => print("success!"));
 }
 
-/*Future deleteSemester(context) async {
-  var uuid = await Provider.of(context).auth.getCurrentUID;
-}*/
 Future<List<Note>> getAllNote(DatabaseReference id) async {
-  print("GETALL: " + id.path + '/note/');
+  /*print("GETALL: " + id.path + '/note/');
   DataSnapshot dataSnapshot =
       await databaseReference.child(id.path + '/note/').once();
   List<Note> noteList = [];
@@ -142,16 +226,34 @@ Future<List<Note>> getAllNote(DatabaseReference id) async {
       print("GETALL: " + id.path + '/note/' + key);
       noteList.add(note);
     });
-  }
+  }*/
+  List<Note> noteList = [];
+  firestoreInstance.collection(id.path + '/note/').get().then((querySnapshot) {
+    querySnapshot.docs.forEach((result) {
+      Note note = createNote(result.data());
+      print(result.data());
+      note.setId(databaseReference.child(id.path + '/note/' + result.id));
+      noteList.add(note);
+    });
+  });
+
+  getNotenschnitt(noteList, id.path);
   return noteList;
 }
 
-void updateNotenschnitt(double schnitt, DatabaseReference fachId) {
-  fachId.update({'fach_durchschnitt': schnitt});
-  print("updated fachdurchschnitt");
+void updateNotenschnitt(double schnitt, String fachId) {
+  List<String> path = fachId.split("/");
+  print(path[0] + path[1] + path[2]);
+  print("splitt");
+  print(path[3]);
+  firestoreInstance
+      .collection(path[0] + "/" + path[1] + "/" + path[2])
+      .doc(path[3])
+      .update({'fach_durchschnitt': schnitt}).then(
+          (value) => print("success!"));
 }
 
-double getNotenschnitt(List list, DatabaseReference fachId) {
+double getNotenschnitt(List list, String fachId) {
   double schnitt;
   if (list.isEmpty) {
     return 0.0;
@@ -172,6 +274,7 @@ double getNotenschnitt(List list, DatabaseReference fachId) {
   }
 
   print("der schnitt: " + schnitt.toString());
+  print(fachId);
   updateNotenschnitt(schnitt, fachId);
 
   return schnitt;

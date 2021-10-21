@@ -30,12 +30,9 @@ class Body extends StatelessWidget {
                       builder: (context) => AddSemester(),
                     ));
               }),
-          RaisedButton(onPressed: () {
-            context.read<AuthenticationService>().signOut();
-          }),
           SemesterTest(),
-          TitleWithMoreBtn(title: "Statistiken", press: () {}),
-          FeaturedPlants(),
+          //TitleWithMoreBtn(title: "Statistiken", press: () {}),
+          //FeaturedPlants(),
           SizedBox(height: kDefaultPadding),
         ],
       ),

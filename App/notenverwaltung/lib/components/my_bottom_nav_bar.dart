@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:notenverwaltung/UI/Statistiken/donutChart.dart';
+import 'package:notenverwaltung/UI/Statistiken/page.dart';
 import 'package:notenverwaltung/UI/Statistiken/statistiken_screen.dart';
 import 'package:notenverwaltung/UI/User/user_screen.dart';
 import 'package:notenverwaltung/UI/home/home_screen.dart';
@@ -20,7 +22,7 @@ class MyBottomNavBar extends StatelessWidget {
       ),
       height: 50,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: kPrimaryColor,
         boxShadow: [
           BoxShadow(
             offset: Offset(0, -10),
@@ -33,7 +35,7 @@ class MyBottomNavBar extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           IconButton(
-            icon: SvgPicture.asset("assets/icons/flower.svg"),
+            icon: SvgPicture.asset("assets/icons/hinzufugen.svg"),
             onPressed: () {
               Navigator.push(
                   context,
@@ -48,7 +50,7 @@ class MyBottomNavBar extends StatelessWidget {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => StatistikenScreen(),
+                    builder: (context) => Statistiken(),
                   ));
             },
           ),

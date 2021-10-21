@@ -5,7 +5,6 @@ import 'package:notenverwaltung/database.dart';
 import 'package:notenverwaltung/fach.dart';
 import 'package:notenverwaltung/fach_page-test.dart';
 import 'package:notenverwaltung/fach_page.dart';
-//import 'package:notenverwaltung/models/fach.dart';
 import 'package:notenverwaltung/components/my_bottom_nav_bar.dart';
 import 'package:notenverwaltung/global.dart';
 import 'package:notenverwaltung/models/note.dart';
@@ -13,24 +12,21 @@ import 'dart:async';
 
 class AddFach extends StatefulWidget {
   final Fach fach;
-  final DatabaseReference semesterId;
-  AddFach({this.fach, this.semesterId}) : super();
+  final String semesterId;
+  String fachId;
+  AddFach({this.fach, this.semesterId, this.fachId}) : super();
 
   @override
   State<StatefulWidget> createState() {
-    // TODO: implement createState
-    print("AddFach id= " +
-        fach.toString() +
-        " semesterId: " +
-        semesterId.toString());
-    return _FormState(fach: fach, semesterId: semesterId);
+    return _FormState(fach: fach, semesterId: semesterId, fachId: fachId);
   }
 }
 
 class _FormState extends State<AddFach> {
-  final DatabaseReference semesterId;
-  _FormState({this.fach, this.semesterId}) : super();
+  final String semesterId;
+  String fachId;
   final Fach fach;
+  _FormState({this.fach, this.semesterId, this.fachId}) : super();
   bool isLoadedSemester = false;
 
   @override
@@ -38,19 +34,7 @@ class _FormState extends State<AddFach> {
     print("Semester id: " + semesterId.toString());
     return Scaffold(
       appBar: buildAppBar(),
-      body: DetailFach(fach: fach, semesterId: semesterId),
-      /*FutureBuilder(
-        future: getFachById(widget.id),
-        builder: (context, snapshot) {
-          if (snapshot.hasError) print(snapshot.error);
-          if (snapshot.hasData) {
-            print("Widget id: " + widget.id.toString());
-            return DetailFach(fach: snapshot.data, semesterId: semesterId);
-          } else {
-            return Center(child: CircularProgressIndicator());
-          }
-        },
-      ),*/
+      body: DetailFach(fach: fach, semesterId: semesterId, fachId: fachId),
       bottomNavigationBar: MyBottomNavBar(),
     );
   }
@@ -65,11 +49,13 @@ class _FormState extends State<AddFach> {
 
 class DetailFach extends StatelessWidget {
   final Fach fach;
-  final DatabaseReference semesterId;
+  final String semesterId;
+  String fachId;
   bool isLoadedSemester = false;
   final _formKey = GlobalKey<FormState>();
 
-  DetailFach({Key key, this.fach, this.semesterId}) : super(key: key);
+  DetailFach({Key key, this.fach, this.semesterId, this.fachId})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -141,35 +127,12 @@ class DetailFach extends StatelessWidget {
       color: kPrimaryColor,
       onPressed: () async {
         if (_formKey.currentState.validate()) {
-          /*if (isLoadedSemester) {
-            print("entered in update");
-            await updateFach(
-                this.fach.id,
-                this.fach.durchschnitt,
-                this.fach.wunschNote,
-                fachName,
-                fachGewichtung,
-                this.fach.semesterId);
-
-            Timer(Duration(seconds: 1), () {
-              Navigator.pop(context);
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      FachScreen(semesterId: this.fach.semesterId),
-                ),
-              );
-            });
-          }*/
           var fach;
           if (isLoadedSemester) {
             fach = new Fach(fachName.text, int.parse(fachGewichtung.text),
                 this.fach.durchschnitt, double.parse(fachWunschNote.text));
-            updateFach(fach, this.fach.id);
+            updateFach(fach, this.fachId, this.semesterId);
           } else {
-            print("Fach name: " + fachName.text);
-            print("Fach gewichtung: " + fachGewichtung.text);
             fach = new Fach(fachName.text, int.parse(fachGewichtung.text), null,
                 double.parse(fachWunschNote.text));
             fach.setId(saveFach(fach, semesterId));

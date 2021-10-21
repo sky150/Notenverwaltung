@@ -39,7 +39,6 @@ class _MyHomePageState extends State<SemesterTest> {
   Widget build(BuildContext context) {
     return Container(
       child: Container(child: SemesterList(this.semesterList)),
-      //TextInputWidget(this.newPost)
     );
   }
 }

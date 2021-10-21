@@ -20,7 +20,6 @@ class Note {
 
   Map<String, dynamic> toJson() {
     return {
-      'note_id': this.id,
       'note_name': this.name,
       'note_note': this.note,
       'note_gewichtung': this.gewichtung,

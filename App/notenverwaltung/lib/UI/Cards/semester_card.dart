@@ -34,7 +34,7 @@ class SemesterCard extends StatelessWidget {
             child: Container(
               padding: EdgeInsets.all(kDefaultPadding / 2),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: kPrimaryColor,
                 borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(10),
                   bottomRight: Radius.circular(10),
@@ -60,7 +60,7 @@ class SemesterCard extends StatelessWidget {
                         TextSpan(
                           text: "$year".toUpperCase(),
                           style: TextStyle(
-                            color: kPrimaryColor.withOpacity(0.5),
+                            color: kTextColor.withOpacity(0.5),
                           ),
                         ),
                       ],

@@ -9,7 +9,7 @@ import 'note.dart';
 import 'noteList.dart';
 
 class NoteTest extends StatefulWidget {
-  final DatabaseReference fachId;
+  final String fachId;
   NoteTest({this.fachId}) : super();
   @override
   _NotePageState createState() => _NotePageState(fachId);
@@ -17,10 +17,9 @@ class NoteTest extends StatefulWidget {
 
 class _NotePageState extends State<NoteTest> {
   List<Note> noteList = [];
-  final DatabaseReference fachId;
+  final String fachId;
 
   _NotePageState(this.fachId);
-
   void newNote(String name, double note, int gewichtung, String datum) {
     var obj = new Note(name, note, gewichtung, datum);
     obj.setId(saveNote(obj, fachId));
@@ -30,7 +29,9 @@ class _NotePageState extends State<NoteTest> {
   }
 
   void updateNote() {
-    getAllNote(fachId).then((noteList) => {
+    DatabaseReference newFachId =
+        FirebaseDatabase.instance.reference().child(fachId);
+    getAllNote(newFachId).then((noteList) => {
           this.setState(() {
             this.noteList = noteList;
           })
@@ -45,7 +46,13 @@ class _NotePageState extends State<NoteTest> {
 
   @override
   Widget build(BuildContext context) {
-    //print(getNotenschnitt(this.noteList).toString());
+    var notenschnitt;
+    /*DatabaseReference newFachId =
+        FirebaseDatabase.instance.reference().child(fachId);*/
+    print(fachId);
+    setState(() {
+      notenschnitt = getNotenschnitt(this.noteList, fachId).toStringAsFixed(2);
+    });
     var noteSchnitt;
     if (getNotenschnitt(this.noteList, fachId) != 0.00) {
       noteSchnitt = Center(
@@ -53,8 +60,7 @@ class _NotePageState extends State<NoteTest> {
           children: [
             Text(" ", textAlign: TextAlign.center),
             Text(
-              'Notenschnitt: ' +
-                  getNotenschnitt(this.noteList, fachId).toStringAsFixed(2),
+              'Notenschnitt: ' + notenschnitt,
               //snapshot.data.toStringAsFixed(2),
               textAlign: TextAlign.center,
             ),
@@ -64,7 +70,6 @@ class _NotePageState extends State<NoteTest> {
     } else {
       noteSchnitt = Container();
     }
-
     return Scaffold(
         appBar: buildAppBar(),
         body: Column(
@@ -73,14 +78,13 @@ class _NotePageState extends State<NoteTest> {
               TitleWithMoreBtn(
                   title: "Note",
                   press: () {
-                    print("Notepage id: " + fachId.toString());
                     Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => AddNote(fachId: fachId),
                         ));
                   }),
-              Container(child: NoteListe(this.noteList)),
+              Container(child: NoteListe(this.noteList, fachId)),
               noteSchnitt
             ]));
   }

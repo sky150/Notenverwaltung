@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:notenverwaltung/UI/TextFields/MyTextFormField.dart';
 import 'package:notenverwaltung/database.dart';
 import 'package:notenverwaltung/semester.dart';
-//import 'package:notenverwaltung/models/semester.dart';
 import 'package:notenverwaltung/semester_screen.dart';
 import 'package:notenverwaltung/UI/home/home_screen.dart';
 import 'package:notenverwaltung/components/my_bottom_nav_bar.dart';
@@ -14,21 +13,22 @@ import 'dart:convert';
 
 class AddSemester extends StatefulWidget {
   final Semester semester;
-  AddSemester({this.semester}) : super();
+  String id;
+  AddSemester({this.semester, this.id}) : super();
 
   @override
   State<StatefulWidget> createState() {
-    // TODO: implement createState
-    return _TestFormState(semester);
+    return _TestFormState(semester, id);
   }
 }
 
 class _TestFormState extends State<AddSemester> {
   final Semester semester;
+  String id;
   bool isLoadedSemester = false;
   final _formKey = GlobalKey<FormState>();
 
-  _TestFormState(this.semester);
+  _TestFormState(this.semester, this.id);
 
   @override
   Widget build(BuildContext context) {
@@ -102,10 +102,9 @@ class _TestFormState extends State<AddSemester> {
                 this.semester.durchschnitt,
                 semesterJahr.text,
                 semesterNotiz.text);
-            semester.setId(this.semester.id);
+            //semester.setId(this.semester.id);
             print(semester);
-            updateS(semester, this.semester.id);
-            //semester.update();
+            updateS(semester, this.id);
           } else {
             semester = new Semester(
                 semesterName.text, null, semesterJahr.text, semesterNotiz.text);
@@ -157,27 +156,3 @@ class _TestFormState extends State<AddSemester> {
     );
   }
 }
-
-/*class _DetailSemesterState extends State<DetailSemester> {
-  //Semester semester;
-  bool isLoadedSemester = false;
-  final _formKey = GlobalKey<FormState>();
-
-  @override
-  Widget build(BuildContext context) {
-    final halfMediaWidth = MediaQuery.of(context).size.width / 2.0;
-    // TODO: implement build
-    /*if (widget.semester.id == null) {
-      setState(() {
-        this.isLoadedSemester = false;
-      });
-    } else {
-      setState(() {
-        this.semester = Semester.fromFach(widget.semester);
-        this.isLoadedSemester = true;
-      });
-    }*/
-
-    return Form(key: _formKey, child: container);
-  }
-}*/

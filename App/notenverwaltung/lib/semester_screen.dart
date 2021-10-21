@@ -34,7 +34,13 @@ class SemesterList extends StatelessWidget {
             children: <Widget>[
               Dismissible(
                   key: Key(semester[index].id.toString()),
-                  background: Container(color: Colors.red),
+                  background: Container(
+                    decoration: ShapeDecoration(
+                      color: Colors.red,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)),
+                    ),
+                  ),
                   child: SemesterCard(
                     semesterName: semester[index].name,
                     year: semester[index].jahr,

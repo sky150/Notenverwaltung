@@ -34,7 +34,7 @@ class FachCard extends StatelessWidget {
             child: Container(
               padding: EdgeInsets.all(kDefaultPadding / 2),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Color(0xff343a40),
                 borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(10),
                   bottomRight: Radius.circular(10),
@@ -60,7 +60,7 @@ class FachCard extends StatelessWidget {
                         TextSpan(
                           text: "Gewichtung: $weight \%".toUpperCase(),
                           style: TextStyle(
-                            color: kPrimaryColor.withOpacity(0.5),
+                            color: Color(0xffced4da).withOpacity(0.5),
                           ),
                         ),
                       ],
